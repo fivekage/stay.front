@@ -3,8 +3,6 @@ name: cd-front
 on:
   push:
     branches: ["master"]
-  pull_request:
-    branches: ["master"]
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # TODO: update Google Cloud project id
