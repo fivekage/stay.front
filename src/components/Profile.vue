@@ -1,6 +1,5 @@
 <template>
   <section>
-    <navigation></navigation>
     <h5 class="center-align">Profile</h5>
 
     <div
@@ -40,7 +39,6 @@
 </template>
 
 <script>
-import navigation from "@/components/NavBar.vue";
 import firebase from "firebase/compat/app";
 
 export default {
@@ -48,9 +46,6 @@ export default {
     return {
       user: null,
     };
-  },
-  components: {
-    navigation,
   },
   created() {
     firebase.auth().onAuthStateChanged((user) => {

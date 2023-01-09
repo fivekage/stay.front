@@ -1,20 +1,7 @@
 <template>
-  <section>
-    <navigation></navigation>
-    <h5 class="center-align">Home</h5>
-  </section>
+  <h5 class="center-align">Home</h5>
 </template>
 
-<script>
-import navigation from "@/components/NavBar.vue";
-export default {
-  data() {
-    return {};
-  },
-  components: {
-    navigation,
-  },
-};
-</script>
+<script></script>
 
 <style></style>
