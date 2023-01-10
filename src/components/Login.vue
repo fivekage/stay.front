@@ -1,8 +1,6 @@
 <template>
-  <section>
-    <h5 class="center-align">Login</h5>
-    <section id="firebaseui-auth-container"></section>
-  </section>
+  <h2 class="text-center">Se connecter</h2>
+  <section id="firebaseui-auth-container"></section>
 </template>
 
 <script>

@@ -8,26 +8,62 @@
       <v-app-bar-title><logo /></v-app-bar-title>
     </v-app-bar>
 
-    <customNavDrawer></customNavDrawer>
+    <v-navigation-drawer color="grey-darken" v-model="drawer">
+      <v-list>
+        <v-list-item
+          prepend-icon="mdi-view-dashboard"
+          title="Tableau de bord"
+          to="/"
+        ></v-list-item>
 
-    <v-main>
-      <router-view />
+        <v-list-item
+          v-show="!user"
+          prepend-icon="mdi-account-box"
+          title="Se connecter"
+          to="/login"
+        ></v-list-item>
+
+        <v-list-item
+          v-show="user"
+          prepend-icon="mdi-account-box"
+          title="Profil"
+          to="/profile"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main scrollable>
+      <v-container fluid>
+        <router-view />
+      </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import logo from "@/components/Logo.vue";
-import customNavDrawer from "@/components/NavDrawer.vue";
+import firebase from "firebase/compat/app";
 export default {
   data() {
     return {
       drawer: null,
+      user: null,
     };
   },
   components: {
     logo,
-    customNavDrawer,
+  },
+  created() {
+    firebase.auth().onAuthStateChanged((user) => {
+      this.user = user;
+    });
+  },
+  methods: {
+    signoutButtonPressed(e) {
+      e.stopPropagation();
+      firebase.auth().signOut();
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>

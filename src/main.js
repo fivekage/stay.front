@@ -37,4 +37,4 @@ const vuetify = createVuetify({
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-createApp(App).use(router).use(vuetify).mount("#app");
+createApp(App).use(vuetify).use(router).mount("#app");
