@@ -1,46 +1,36 @@
 <template>
-  <section>
-    <navigation></navigation>
-    <h5 class="center-align">Profile</h5>
-
-    <div
-      class="card horizontal"
-      style="max-width: 400px; margin: 0 auto"
-      v-if="user"
-    >
-      <div class="card-image" style="margin-top: 25px; margin-left: 10px">
-        <img
-          :src="user.photoURL"
-          style="
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            border: 4px solid #333;
-          "
-        />
-      </div>
-      <div class="card-stacked">
-        <div class="card-content">
-          <p>
-            name:
-            <strong>{{ user.displayName }}</strong>
-            <br />email:
-            <strong>{{ user.email }}</strong>
-            <br />uid:
-            <strong>{{ user.uid }}</strong>
-            <br />provider:
-            <strong class="teal-text">{{
-              user.providerData[0].providerId
-            }}</strong>
-          </p>
-        </div>
-      </div>
+  <v-card class="mx-auto" max-width="368" elevation="10">
+    <div class="mx-auto text-center mt-3">
+      <v-avatar
+        :image="user.photoURL"
+        alt="Photo de profil"
+        size="80"
+        referrerpolicy="no-referrer"
+      >
+      </v-avatar>
+      <h3 class="mt-3">{{ user.displayName }}</h3>
+      <p class="text-caption mt-2">
+        {{ user.email }}
+      </p>
+      <p class="text-caption mt-1">
+        {{ user.uid }}
+      </p>
+      <p class="text-caption mt-1">
+        Fourni par "{{ user.providerData[0].providerId }}"
+      </p>
     </div>
-  </section>
+
+    <v-divider class="mt-3"></v-divider>
+
+    <v-card-actions>
+      <v-btn rounded variant="text" block v-on:click="signoutButtonPressed"
+        >Se déconnecter</v-btn
+      >
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script>
-import navigation from "@/components/NavBar.vue";
 import firebase from "firebase/compat/app";
 
 export default {
@@ -49,15 +39,18 @@ export default {
       user: null,
     };
   },
-  components: {
-    navigation,
-  },
   created() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.user = user;
-      }
-    });
+    const user = firebase.auth().currentUser;
+    if (user) {
+      this.user = user;
+    }
+  },
+  methods: {
+    signoutButtonPressed(e) {
+      e.stopPropagation();
+      firebase.auth().signOut();
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>
