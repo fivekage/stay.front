@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Login from "@/components/Login";
-import Home from "@/components/Home";
-import Profile from "@/components/Profile";
+import Login from "@/views/Login";
+import Home from "@/views/Home";
+import Profile from "@/views/Profile";
+import Map from "@/views/Map";
 import firebase from "firebase/compat/app";
 
 const routes = [
@@ -20,6 +21,11 @@ const routes = [
     meta: {
       guest: true,
     },
+  },
+  {
+    path: "/map",
+    name: "Map",
+    component: Map,
   },
   {
     path: "/",

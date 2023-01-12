@@ -14,6 +14,11 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 };
 
+// globally store google maps config
+window.googleMapsConfig = {
+  apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
+};
+
 // Vuetify
 import "vuetify/styles";
 import "@mdi/font/css/materialdesignicons.css";

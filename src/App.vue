@@ -29,6 +29,12 @@
           title="Profil"
           to="/profile"
         ></v-list-item>
+
+        <v-list-item
+          prepend-icon="mdi-map"
+          title="Carte"
+          to="/map"
+        ></v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -68,11 +74,16 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .v-app-bar-title {
   display: flex;
+
+  & > div {
+    display: contents;
+  }
 }
-.v-app-bar-title > div {
-  display: contents;
+
+.v-main .v-container {
+  min-height: 100%;
 }
 </style>

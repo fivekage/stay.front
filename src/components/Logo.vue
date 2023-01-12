@@ -10,18 +10,19 @@
   </div>
 </template>
 
-<style>
+<style lang="scss">
 div.logo {
   display: inline-flex;
   align-items: center;
   height: max-content;
-}
-div.logo > .v-img {
-  display: inline-block;
-  margin-right: 10px;
-}
-div.logo > .logo-text {
-  font-size: 1.5rem;
-  font-weight: 500;
+
+  & > .v-img {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  & > .logo-text {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
 }
 </style>
