@@ -74,7 +74,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .v-app-bar-title {
   display: flex;
 

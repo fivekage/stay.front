@@ -6,6 +6,7 @@
 
 <script>
 import gmapsInit from "@/utils/gmaps";
+import getLocation from "@/utils/getLocation";
 
 export default {
   name: "GoogleMaps",
@@ -23,13 +24,22 @@ export default {
       // init and wait for the Google script is mounted
       this.google = await gmapsInit();
 
-      // if the location is already set, for example
-      // when returning back to this view from another one
-      if ("lat" in this.myLocation && this.myLocation.lat) {
-        this.drawMap();
-        // set the current location
-        this.addMarker(this.myLocation);
-      }
+      // get the current location
+      getLocation(
+        function (loc) {
+          debugger;
+          // if the location is already set, for example
+          // when returning back to this view from another one
+          if (loc != null && loc.coords.latitude != null) {
+            this.drawMap();
+            // set the current location
+            this.addMarker(loc.coords);
+          }
+        },
+        function () {
+          console.error("Cannot get location.");
+        }
+      );
     } catch (err) {
       console.log("ERROR:", err);
     }
@@ -122,7 +132,7 @@ export default {
 <style scoped>
 .map {
   width: 100%;
-  min-height: 400px;
+  min-height: 500px;
   max-height: 100%;
 }
 </style>
