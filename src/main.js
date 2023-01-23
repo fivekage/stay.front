@@ -14,7 +14,32 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 };
 
+// globally store google maps config
+window.googleMapsConfig = {
+  apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
+};
+
+// Vuetify
+import "vuetify/styles";
+import "@mdi/font/css/materialdesignicons.css";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
+
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: {
+      mdi,
+    },
+  },
+});
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-createApp(App).use(router).mount("#app");
+createApp(App).use(vuetify).use(router).mount("#app");
