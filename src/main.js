@@ -27,6 +27,38 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    background: "#FFFFFF",
+    surface: "#FFFFFF",
+    primary: "#E08600",
+    "primary-darker": "#B56C00",
+    secondary: "#03DAC6",
+    "secondary-darken-1": "#018786",
+    error: "#B00020",
+    info: "#2196F3",
+    success: "#4CAF50",
+    warning: "#FB8C00",
+  },
+};
+
+const myCustomDarkTheme = {
+  dark: true,
+  colors: {
+    background: "#000",
+    surface: "#000",
+    primary: "#FFF",
+    "primary-darker": "#FFF",
+    secondary: "#03DAC6",
+    "secondary-darken-1": "#018786",
+    error: "#B00020",
+    info: "#2196F3",
+    success: "#4CAF50",
+    warning: "#FB8C00",
+  },
+};
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -35,6 +67,13 @@ const vuetify = createVuetify({
     aliases,
     sets: {
       mdi,
+    },
+  },
+  theme: {
+    defaultTheme: "myCustomLightTheme",
+    themes: {
+      myCustomLightTheme,
+      myCustomDarkTheme,
     },
   },
 });
