@@ -41,6 +41,10 @@ export default {
   },
   created() {
     const user = firebase.auth().currentUser;
+    firebase
+      .auth()
+      .currentUser.getIdToken()
+      .then((data) => localStorage.setItem("token", data));
     if (user) {
       this.user = user;
     }
@@ -49,6 +53,7 @@ export default {
     signoutButtonPressed(e) {
       e.stopPropagation();
       firebase.auth().signOut();
+      localStorage.clear();
       this.$router.push({ name: "Login" });
     },
   },

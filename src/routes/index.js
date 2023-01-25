@@ -4,8 +4,14 @@ import Home from "@/views/Home";
 import Profile from "@/views/Profile";
 import Map from "@/views/Map";
 import firebase from "firebase/compat/app";
+import AddRoom from "@/components/AddRoom";
 
 const routes = [
+  {
+    path: "/addRoom",
+    name: "AddRoom", // will be deleted, just used for testing
+    component: AddRoom,
+  },
   {
     path: "/profile",
     name: "Profile",
