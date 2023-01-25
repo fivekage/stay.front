@@ -1,5 +1,5 @@
 <template>
-  <form ref="form" @submit.prevent="validate">
+  <form class="form" ref="form" @submit.prevent="validate">
     <v-text-field
       v-model="roomName"
       label="Nom"
@@ -112,8 +112,7 @@ export default {
           uid: "8a283a77-6fd3-4625-9087-fac29c8eb5df",
           createdBy: "samy",
         },
-        (response) => {
-          console.log(response);
+        () => {
           this.message.type = "success";
           this.message.text = "Le salon a bien été créée";
           this.message.display = true;
@@ -157,5 +156,12 @@ div.v-field {
 }
 .colorPicker {
   display: inline;
+}
+
+.form {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 </style>

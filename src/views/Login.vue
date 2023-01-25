@@ -24,6 +24,13 @@ export default {
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
       ],
+      callbacks: {
+        signInSuccessWithAuthResult: function (authResult) {
+          console.log(authResult);
+
+          return false;
+        },
+      },
     };
     ui.start("#firebaseui-auth-container", uiConfig);
   },

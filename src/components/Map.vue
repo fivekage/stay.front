@@ -2,14 +2,44 @@
 
 <template>
   <div class="map" ref="map"></div>
+  <v-btn
+    @click.stop="drawer = !drawer"
+    prepend-icon="mdi-chevron-double-up"
+    rounded
+    class="map__button"
+  >
+    Salons accessibles
+  </v-btn>
+  <v-navigation-drawer location="bottom" v-model="drawer" temporary>
+    <v-list>
+      <v-list-subheader>Salons accessibles</v-list-subheader>
+    </v-list>
+
+    <v-divider></v-divider>
+    <v-list density="compact" :items="items"></v-list>
+
+    <v-dialog v-model="dialog">
+      <template v-slot:activator="{ props }">
+        <div class="d-flex justify-center py-3">
+          <v-btn v-bind="props" icon="mdi-plus" color="primary"></v-btn>
+        </div>
+      </template>
+      <AddRoom />
+    </v-dialog>
+  </v-navigation-drawer>
 </template>
 
 <script>
 import gmapsInit from "@/utils/gmaps";
 import getLocation from "@/utils/getLocation";
+import AddRoom from "./AddRoom.vue";
+import { getAllRooms } from "@/utils/api";
 
 export default {
   name: "GoogleMaps",
+  components: {
+    AddRoom,
+  },
   props: {
     center: {
       type: Object,
@@ -39,6 +69,9 @@ export default {
       map: null,
       innerCircles: [],
       userMarker: null,
+      drawer: null,
+      dialog: false,
+      items: [],
     };
   },
   computed: {
@@ -50,6 +83,9 @@ export default {
       // return the object expected by Google Maps
       return { lat: this.center.lat, lng: this.center.lng };
     },
+  },
+  beforeMount() {
+    this.initRooms();
   },
   methods: {
     drawMap() {
@@ -116,6 +152,23 @@ export default {
     centerMap(location) {
       this.map.panTo(location);
     },
+    initRooms() {
+      getAllRooms()
+        .then((res) => {
+          console.log("Rooms loaded :", res);
+
+          this.items = res.data.map((room) => {
+            return {
+              title: room.value.name,
+              value: room.key.toString(),
+            };
+          });
+          console.log("items: ", this.items);
+        })
+        .catch((err) => {
+          console.error("erreur récupération rooms: ", err);
+        });
+    },
   },
   watch: {
     circle: function (newVal) {
@@ -142,7 +195,18 @@ export default {
 <style scoped>
 .map {
   width: 100%;
-  min-height: 500px;
-  max-height: 100%;
+  min-height: 100vh;
+  position: unset !important;
+  overflow: auto !important;
+}
+
+.map__button {
+  position: sticky;
+  bottom: 1.4rem;
+  width: 90%;
+}
+
+.v-main__scroller {
+  overflow: hidden !important;
 }
 </style>

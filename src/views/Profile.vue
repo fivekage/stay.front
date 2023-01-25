@@ -41,10 +41,9 @@ export default {
   },
   created() {
     const user = firebase.auth().currentUser;
-    firebase
-      .auth()
-      .currentUser.getIdToken()
-      .then((data) => localStorage.setItem("token", data));
+    user.getIdToken(true).then((data) => {
+      localStorage.setItem("token", data);
+    });
     if (user) {
       this.user = user;
     }

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "@/views/Login";
-import Home from "@/views/Home";
+import DirectLink from "@/views/DirectLink";
 import Profile from "@/views/Profile";
 import Map from "@/views/Map";
 import firebase from "firebase/compat/app";
@@ -29,14 +29,14 @@ const routes = [
     },
   },
   {
-    path: "/map",
+    path: "/",
     name: "Map",
     component: Map,
   },
   {
-    path: "/",
-    name: "Home",
-    component: Home,
+    path: "/direct-link",
+    name: "DirectLink",
+    component: DirectLink,
   },
 ];
 

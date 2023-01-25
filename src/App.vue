@@ -10,12 +10,13 @@
 
     <v-navigation-drawer color="grey-darken" v-model="drawer">
       <v-list>
-        <v-list-item
-          prepend-icon="mdi-view-dashboard"
-          title="Tableau de bord"
-          to="/"
-        ></v-list-item>
+        <v-list-item prepend-icon="mdi-map" title="Carte" to="/"></v-list-item>
 
+        <v-list-item
+          prepend-icon="mdi-forum"
+          title="Liens directes"
+          to="/direct-link"
+        ></v-list-item>
         <v-list-item
           v-show="!user"
           prepend-icon="mdi-account-box"
@@ -28,12 +29,6 @@
           prepend-icon="mdi-account-box"
           title="Profil"
           to="/profile"
-        ></v-list-item>
-
-        <v-list-item
-          prepend-icon="mdi-map"
-          title="Carte"
-          to="/map"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>

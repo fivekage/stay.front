@@ -2,7 +2,6 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "https://localhost:5001/api/",
-  headers: localStorage.getItem("token"),
 });
 
 export function createRoom(datas, success, error) {
@@ -53,4 +52,22 @@ export function createRoom(datas, success, error) {
       console.error("Error:" + error);
       return error(err);
     });
+}
+
+export function getAllRooms() {
+  return new Promise((resolve, reject) => {
+    instance
+      .get("chat-room/all", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 }
