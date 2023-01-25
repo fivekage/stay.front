@@ -15,7 +15,7 @@ export default {
       type: Object,
       required: true,
     },
-    markers: {
+    circles: {
       type: Array,
     },
   },
@@ -23,23 +23,12 @@ export default {
     try {
       // init and wait for the Google script is mounted
       this.google = await gmapsInit();
+      this.drawMap();
 
       // get the current location
-      getLocation(
-        function (loc) {
-          debugger;
-          // if the location is already set, for example
-          // when returning back to this view from another one
-          if (loc != null && loc.coords.latitude != null) {
-            this.drawMap();
-            // set the current location
-            this.addMarker(loc.coords);
-          }
-        },
-        function () {
-          console.error("Cannot get location.");
-        }
-      );
+      getLocation(this.setUserMarker, function () {
+        console.error("Cannot get location.");
+      });
     } catch (err) {
       console.log("ERROR:", err);
     }
@@ -48,7 +37,7 @@ export default {
     return {
       google: null,
       map: null,
-      innerMarkers: [],
+      innerCircles: [],
       userMarker: null,
     };
   },
@@ -75,43 +64,64 @@ export default {
         this.map.setCenter(this.myLocation);
       }
     },
-    // add a marker with a blue dot to indicate the user location
+    // add a circle with a blue dot to indicate the user location
     setUserMarker(location) {
       this.userMarker = new this.google.maps.Marker({
+        position: new this.google.maps.LatLng(
+          location.coords.latitude,
+          location.coords.longitude
+        ),
+        map: this.map,
+        icon: {
+          path: this.google.maps.SymbolPath.CIRCLE,
+          scale: 7,
+          fillColor: "#4285F4",
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: "#FFF",
+        },
+      });
+      this.centerMap(
+        new this.google.maps.LatLng(
+          location.coords.latitude,
+          location.coords.longitude
+        )
+      );
+    },
+    // Adds a circle to the map and push to the array
+    addCircle(location) {
+      // the circle positioned at `myLocation`
+      const circle = new this.google.maps.Circle({
         position: location,
         map: this.map,
       });
+      this.innerCircles.push(circle);
     },
-    // Adds a marker to the map and push to the array
-    addMarker(location) {
-      // the marker positioned at `myLocation`
-      const marker = new this.google.maps.Marker({
-        position: location,
-        map: this.map,
-      });
-      this.innerMarkers.push(marker);
-    },
-    // Sets the map on all markers in the array
-    setAllMarkersInMap(map) {
-      for (const element of this.innerMarkers) {
+    // Sets the map on all circles in the array
+    setAllCirclesInMap(map) {
+      for (const element of this.innerCircles) {
         element.setMap(map);
       }
     },
-    // Removes the markers from the map, but keeps them in the array
-    clearMarkers() {
-      this.setAllMarkersInMap(null);
+    // Removes the circles from the map, but keeps them in the array
+    clearCircles() {
+      this.setAllCirclesInMap(null);
     },
-    // Deletes all markers in the array by removing references to them
-    deleteMarkers() {
-      this.clearMarkers();
-      this.innerMarkers = [];
+    // Deletes all circles in the array by removing references to them
+    deleteCircles() {
+      this.clearCircles();
+      this.innerCircles = [];
+    },
+    // Center the map to the given location
+    centerMap(location) {
+      this.map.panTo(location);
     },
   },
   watch: {
-    marker: function (newVal) {
+    circle: function (newVal) {
       if (typeof newVal === Array) {
-        // clear the markers
-        this.clearMarkers();
+        // clear the circles
+        this.clearCircles();
 
         for (const position of newVal) {
           if (
@@ -120,7 +130,7 @@ export default {
             typeof position.lng === "number"
           ) {
             // set the current location
-            this.addMarker(position);
+            this.addCircle(position);
           }
         }
       }
