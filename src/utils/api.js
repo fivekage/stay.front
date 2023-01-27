@@ -11,7 +11,6 @@ export function createRoom(datas, success, error) {
   const color = datas.color;
   const lat = datas.lat;
   const lng = datas.lng;
-  const uid = datas.uid;
   const createdBy = datas.createdBy;
 
   if (
@@ -22,14 +21,12 @@ export function createRoom(datas, success, error) {
     !lat ||
     !lng ||
     !color ||
-    !uid ||
     !createdBy
   )
     return;
 
   // Create room into our personal API
   const data = {
-    uid: uid,
     createdBy: createdBy,
     name: name,
     description: description,
@@ -43,6 +40,7 @@ export function createRoom(datas, success, error) {
     .post("chat-room", data, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
     .then((res) => {
