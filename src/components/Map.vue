@@ -170,7 +170,6 @@ export default {
     },
     // Adds a circle to the map and push to the array
     addCircle(location, radius, color) {
-      console.log("addCircle", location, radius, color);
       // the circle positioned at `myLocation`
       const circle = new this.google.maps.Circle({
         map: this.map,
@@ -217,9 +216,7 @@ export default {
             };
           });
           // add the circles to the map
-          console.log(this.items);
           this.items.forEach((element) => {
-            console.log(element);
             this.addCircle(
               {
                 lat: parseFloat(element.latitude),

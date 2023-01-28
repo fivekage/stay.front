@@ -1,4 +1,5 @@
 <template>
+  <h1>Profil utilisateur</h1>
   <v-card class="mx-auto" max-width="368" elevation="10">
     <div class="mx-auto text-center mt-3">
       <v-avatar
@@ -9,7 +10,7 @@
       >
       </v-avatar>
       <h3 class="mt-3">{{ user.displayName }}</h3>
-      <p class="text-caption mt-2">
+      <p class="text-caption mt-2 email">
         {{ user.email }}
       </p>
       <p class="text-caption mt-1">
