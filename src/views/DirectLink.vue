@@ -1,5 +1,5 @@
 <template>
-  <h5 class="center-align">Liens Directes</h5>
+  <h5 class="center-align">Liens Directs</h5>
 </template>
 
 <script></script>

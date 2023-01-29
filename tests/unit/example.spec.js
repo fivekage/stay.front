@@ -7,6 +7,6 @@ describe("Direct Link", () => {
     const wrapper = mount(DirectLink);
     const title = wrapper.get("h5");
 
-    expect(title.text()).toBe("Liens Directes");
+    expect(title.text()).toBe("Liens Directs");
   });
 });
