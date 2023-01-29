@@ -1,5 +1,5 @@
 <template>
-  <form ref="form" @submit.prevent="validate">
+  <form class="form" ref="form" @submit.prevent="validate">
     <v-text-field
       v-model="roomName"
       label="Nom"
@@ -23,8 +23,8 @@
         v-model="roomRadius"
         on-update:model-value="roomRadius = $event.toFixed(1)"
         thumb-label="always"
-        min="50"
-        max="1000"
+        min="100"
+        max="5000"
         color="primary"
       ></v-slider>
     </div>
@@ -100,6 +100,7 @@ export default {
     validate() {
       this.lat = 53.3;
       this.lng = 3.3;
+
       createRoom(
         {
           name: this.roomName,
@@ -108,32 +109,22 @@ export default {
           color: this.roomColor,
           lat: this.lat,
           lng: this.lng,
-          // TODO: to remove
-          uid: "8a283a77-6fd3-4625-9087-fac29c8eb5df",
           createdBy: "samy",
         },
-        (response) => {
-          console.log(response);
+        () => {
           this.message.type = "success";
           this.message.text = "Le salon a bien été créée";
           this.message.display = true;
+          this.$emit("submitForm", false);
         },
         (error) => {
           console.error(error);
           this.message.type = "error";
           this.message.text = error.message;
           this.message.display = true;
+          this.$emit("submitForm", true);
         }
       );
-
-      this.$emit("add-room", {
-        name: this.roomName,
-        description: this.roomDescription,
-        radius: this.roomRadius,
-        color: this.roomColor,
-        lat: this.lat,
-        lng: this.lng,
-      });
     },
   },
 };
@@ -157,5 +148,12 @@ div.v-field {
 }
 .colorPicker {
   display: inline;
+}
+
+.form {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 </style>
