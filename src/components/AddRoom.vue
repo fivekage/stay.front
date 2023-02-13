@@ -71,12 +71,20 @@ import { createRoom } from "../utils/api";
 export default {
   name: "AddRoom",
   // NEED to pass data to make it work <child-vue :some-data="someData"></child-vue>
-  props: [`"lat", "lng"`],
+  props: {
+    position: {
+      type: Object,
+      required: true,
+    },
+  },
 
   validations: {
     roomName: { required, maxLength: maxLength(10) },
     roomDescription: { required },
     roomRadius: { required },
+  },
+  setup(props) {
+    console.info(props.position);
   },
 
   data: () => ({
@@ -98,17 +106,14 @@ export default {
 
   methods: {
     validate() {
-      this.lat = 53.3;
-      this.lng = 3.3;
-
       createRoom(
         {
           name: this.roomName,
           description: this.roomDescription,
           radius: this.roomRadius,
           color: this.roomColor,
-          lat: this.lat,
-          lng: this.lng,
+          lat: this.position.lat,
+          lng: this.position.lng,
           createdBy: "samy",
         },
         () => {

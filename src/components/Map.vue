@@ -64,7 +64,7 @@
           <v-btn v-bind="props" icon="mdi-plus" color="primary"></v-btn>
         </div>
       </template>
-      <AddRoom @submit-form="submitForm" />
+      <AddRoom v-bind:position="center" @submit-form="submitForm" />
     </v-dialog>
   </v-navigation-drawer>
 </template>
@@ -169,7 +169,7 @@ export default {
       );
     },
     // Adds a circle to the map and push to the array
-    addCircle(location, radius, color) {
+    addCircle(location, radius, color, room) {
       // the circle positioned at `myLocation`
       const circle = new this.google.maps.Circle({
         map: this.map,
@@ -179,8 +179,41 @@ export default {
         fillOpacity: 0.35,
         center: location,
         radius: radius,
+        id: room.id,
+        name: room.name,
+        description: room.description,
       });
+
+      // add the circle to the array
       this.innerCircles.push(circle);
+
+      // construct html for the info window
+      const contentString = `
+        <div class="d-flex flex-column">
+          <p class="text-h6 font-weight-medium">${circle.name}</p>
+          <p class="text-caption font-italic">${circle.description}</p>
+          <p class="text-caption">Users connected : <strong>${12}</strong></p>
+        </div>
+      `;
+
+      // add a listener to the circle
+      const infoWindow = new this.google.maps.InfoWindow({
+        content: contentString,
+        ariaLabel: circle.id,
+      });
+      circle.addListener("click", () => {
+        console.log("Join room, :" + circle.id);
+
+        const marker = new this.google.maps.Marker({
+          position: location,
+          map: this.map,
+          visible: false,
+        });
+        infoWindow.open({
+          anchor: marker,
+          map: this.map,
+        });
+      });
     },
     // Sets the map on all circles in the array
     setAllCirclesInMap(map) {
@@ -207,6 +240,7 @@ export default {
           this.items = res.data.map((room) => {
             return {
               title: room.value.name,
+              description: room.value.description,
               value: room.key.toString(),
               color: room.value.color,
               radius: room.value.radius,
@@ -223,7 +257,12 @@ export default {
                 lng: parseFloat(element.longitude),
               },
               element.radius,
-              element.color
+              element.color,
+              {
+                id: element.value,
+                name: element.title,
+                description: element.description,
+              }
             );
           });
           this.setAllCirclesInMap(this.map);
