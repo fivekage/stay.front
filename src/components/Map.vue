@@ -23,10 +23,7 @@
               </v-list-item-icon>
             </template>
 
-            <v-list-item-title
-              class="px-3"
-              v-text="item.title"
-            ></v-list-item-title>
+            <v-list-item-title class="px-3">{{ item.title }}</v-list-item-title>
             <v-spacer></v-spacer>
             <template v-slot:append>
               <div class="d-flex mr-3">
@@ -73,7 +70,7 @@
 import gmapsInit from "@/utils/gmaps";
 import getLocation from "@/utils/getLocation";
 import AddRoom from "./AddRoom.vue";
-import { getAllRooms } from "@/utils/api";
+import { getAllRooms, getReachableRooms } from "@/utils/api";
 
 export default {
   name: "GoogleMaps",
@@ -112,6 +109,7 @@ export default {
       drawer: null,
       dialog: false,
       items: [],
+      allItems: [],
     };
   },
   computed: {
@@ -235,22 +233,41 @@ export default {
       this.map.panTo(location);
     },
     initRooms() {
-      getAllRooms()
+      getReachableRooms(this.center.lng, this.center.lat)
         .then((res) => {
           this.items = res.data.map((room) => {
             return {
-              title: room.value.name,
-              description: room.value.description,
-              value: room.key.toString(),
-              color: room.value.color,
-              radius: room.value.radius,
+              title: room.name,
+              description: room.description,
+              value: room.uuid.toString(),
+              color: room.color,
+              radius: room.radius,
               usersConnected: 13,
-              latitude: room.value.latitude,
-              longitude: room.value.longitude,
+              latitude: room.latitude,
+              longitude: room.longitude,
+            };
+          });
+        })
+        .catch((err) => {
+          console.error("erreur récupération rooms: ", err);
+        });
+
+      getAllRooms()
+        .then((res) => {
+          this.allItems = res.data.map((room) => {
+            return {
+              title: room.name,
+              description: room.description,
+              value: room.uuid.toString(),
+              color: room.color,
+              radius: room.radius,
+              usersConnected: 13,
+              latitude: room.latitude,
+              longitude: room.longitude,
             };
           });
           // add the circles to the map
-          this.items.forEach((element) => {
+          this.allItems.forEach((element) => {
             this.addCircle(
               {
                 lat: parseFloat(element.latitude),
