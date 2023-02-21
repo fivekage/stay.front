@@ -69,3 +69,24 @@ export function getAllRooms() {
       });
   });
 }
+
+export function getReachableRooms(longitude, latitude) {
+  if (!longitude || !latitude) throw new Error("Missing longitude or latitude");
+
+  return new Promise((resolve, reject) => {
+    instance
+      .get("chat-room", {
+        params: { longitude: longitude, latitude: latitude },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
