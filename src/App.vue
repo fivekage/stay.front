@@ -10,12 +10,18 @@
 
     <v-navigation-drawer color="grey-darken" v-model="drawer">
       <v-list>
-        <v-list-item prepend-icon="mdi-map" title="Carte" to="/"></v-list-item>
+        <v-list-item
+          v-show="user"
+          prepend-icon="mdi-map"
+          title="Carte"
+          to="/"
+        ></v-list-item>
 
         <v-list-item
           prepend-icon="mdi-forum"
           title="Liens directes"
           to="/direct-link"
+          v-show="user"
         ></v-list-item>
         <v-list-item
           v-show="!user"
