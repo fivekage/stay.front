@@ -2,8 +2,7 @@
 FROM node:lts-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
-RUN apk update
-RUN apk add python --update-cache
+RUN apk update 
 RUN npm install
 COPY . .
 RUN npm run build
