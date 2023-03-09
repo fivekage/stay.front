@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://localhost:5001/api/",
+  baseURL: process.env.API_BASE_URL,
 });
 
 export function createRoom(datas, success, error) {
