@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import firebase from "firebase/compat/app";
 import Login from "@/views/Login";
 import DirectLink from "@/views/DirectLink";
 import Profile from "@/views/Profile";
 import Map from "@/views/Map";
-import firebase from "firebase/compat/app";
+import AddRoom from "@/components/AddRoom";
 
 const routes = [
   {
