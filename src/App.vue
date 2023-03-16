@@ -18,10 +18,10 @@
         ></v-list-item>
 
         <v-list-item
-          prepend-icon="mdi-forum"
-          title="Liens directes"
-          to="/direct-link"
           v-show="user"
+          prepend-icon="mdi-forum"
+          title="Liens directs"
+          to="/direct"
         ></v-list-item>
         <v-list-item
           v-show="!user"
