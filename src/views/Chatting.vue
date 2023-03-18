@@ -1,6 +1,15 @@
 <template>
   <h2>Chatting test</h2>
-  <div class="messages"></div>
+  <div id="messages">
+    <chat-text-bubble
+      v-for="(message, index) in messages"
+      :key="index"
+      :content="message.content"
+      :isInwards="message.isInwards"
+      :name="message.name"
+      :content_type="message.content_type"
+    ></chat-text-bubble>
+  </div>
   <!-- lower text bar and send button -->
   <v-app-bar location="bottom" absolute height="48" color="white" elevation="0">
     <v-text-field
@@ -38,13 +47,18 @@
 
 <script>
 import firebase from "firebase/compat/app";
-//import ChatTextBubble from "@/components/ChatTextBubble.vue";
+import ChatTextBubble from "@/components/ChatTextBubble.vue";
 import { connect, sendMsg } from "@/utils/chatting";
 
 export default {
+  components: {
+    ChatTextBubble,
+  },
   data() {
     return {
+      // user object
       user: null,
+      // channel type
       type: {
         type: String,
         required: true,
@@ -53,11 +67,16 @@ export default {
           return ["channel", "direct"].includes(value);
         },
       },
+      // channel id
       id: {
         type: Number,
         required: true,
       },
+      // message to be sending
       message: "",
+      // all messages in current channel
+      messages: [],
+      // actively sending a message right now
       sending: false,
     };
   },
@@ -80,6 +99,13 @@ export default {
       this.sending = true;
       sendMsg(this.message);
       setTimeout(() => {
+        const sentMessage = {
+          content: this.message,
+          isInwards: false,
+          name: "Moi",
+          content_type: "text",
+        };
+        this.messages.push(sentMessage);
         this.sending = false;
         this.message = "";
       }, 1000);

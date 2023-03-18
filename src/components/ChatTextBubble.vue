@@ -10,8 +10,17 @@
     </v-avatar>
     <div>
       <p class="name" v-if="isInwards">{{ name }}</p>
-      <div :class="{ contents, inwards: isInwards }">
-        <slot></slot>
+      <div
+        class="contents"
+        :class="{ inwards: isInwards }"
+        :style="{ backgroundColor: isInwards ? '#c7c7c7' : 'primary-darker' }"
+      >
+        <p
+          v-if="this.content_type == 'text'"
+          :style="{ color: isInwards ? 'black' : 'white' }"
+        >
+          {{ this.content }}
+        </p>
       </div>
     </div>
   </div>
@@ -60,16 +69,16 @@ export default {
     display: inline-block;
     padding: 10px;
     border-radius: 10px;
-    background-color: #ec6f09;
-    color: #fff;
+    /*background-color: var(--v-theme-primary-darker);
+    color: #fff;*/
     max-width: 80%;
     word-wrap: break-word;
     margin: 0 10px;
 
-    &.inwards {
+    /*&.inwards {
       background-color: #c7c7c7;
       color: #000;
-    }
+    }*/
   }
 }
 </style>
