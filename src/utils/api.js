@@ -4,6 +4,10 @@ const instance = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
 });
 
+/**
+ * Rooms
+ */
+
 export function createRoom(datas, success, error) {
   const name = datas.name;
   const description = datas.description;
@@ -81,6 +85,29 @@ export function getReachableRooms(longitude, latitude) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+/**
+ * Direct Links
+ */
+
+export function getAllDirectLinks(userUuid) {
+  return new Promise((resolve, reject) => {
+    instance
+      .get("direct-link/all", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        params: { me: userUuid },
       })
       .then((res) => {
         resolve(res);
