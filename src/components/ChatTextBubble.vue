@@ -1,28 +1,21 @@
 <template>
-  <div class="text-bubble">
-    <v-avatar
-      :image="avatar"
-      v-if="isInwards"
-      alt="Photo de profil"
-      size="80"
-      referrerpolicy="no-referrer"
-    >
-    </v-avatar>
-    <div>
-      <p class="name" v-if="isInwards">{{ name }}</p>
-      <div
-        class="contents"
-        :class="{ inwards: isInwards }"
-        :style="{ backgroundColor: isInwards ? '#c7c7c7' : 'primary-darker' }"
-      >
-        <p
-          v-if="this.content_type == 'text'"
-          :style="{ color: isInwards ? 'black' : 'white' }"
-        >
+  <div class="text-bubble" :class="{ inwards: isInwards }">
+    <div class="name-content">
+      <p class="name">{{ this.name }}</p>
+      <div class="contents" :class="{ inwards: isInwards }">
+        <p v-if="this.content_type == 'text'">
           {{ this.content }}
         </p>
       </div>
     </div>
+    <v-avatar
+      :image="this.avatar"
+      class="avatar"
+      alt="Photo de profil"
+      size="40"
+      referrerpolicy="no-referrer"
+    >
+    </v-avatar>
   </div>
 </template>
 
@@ -57,28 +50,41 @@ export default {
 .text-bubble {
   display: flex;
   flex-direction: row;
-  margin: 10px 0;
+  margin: 0;
+  margin-bottom: 10px;
+  justify-content: flex-end;
 
-  .name {
-    font-size: 0.8rem;
-    margin: 0;
-    margin-bottom: 5px;
+  &.inwards {
+    flex-direction: row-reverse;
   }
 
-  .contents {
-    display: inline-block;
-    padding: 10px;
-    border-radius: 10px;
-    /*background-color: var(--v-theme-primary-darker);
-    color: #fff;*/
-    max-width: 80%;
-    word-wrap: break-word;
-    margin: 0 10px;
+  .avatar {
+    margin-right: 10px;
+  }
 
-    /*&.inwards {
-      background-color: #c7c7c7;
+  .name-content {
+    .name {
+      font-size: 0.8rem;
+      margin: 0;
+      text-align: end;
+      padding: 0 10px;
+    }
+
+    .contents {
+      padding: 10px;
+      border-radius: 10px 0 10px 10px;
+      background-color: #e08600;
       color: #000;
-    }*/
+      max-width: 70%;
+      /*min-width: fit-content;*/
+      margin-right: 10px;
+      float: right;
+
+      &.inwards {
+        background-color: #c7c7c7;
+        border-radius: 10px 10px 0 10px;
+      }
+    }
   }
 }
 </style>

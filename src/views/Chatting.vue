@@ -8,6 +8,7 @@
       :isInwards="message.isInwards"
       :name="message.name"
       :content_type="message.content_type"
+      :avatar="message.avatar"
     ></chat-text-bubble>
   </div>
   <!-- lower text bar and send button -->
@@ -91,19 +92,41 @@ export default {
     }
 
     // connect to the websocket
-    connect();
+    connect((msg) => {
+      console.log("Received message event");
+      // TODO: Later, we'll get the user data
+      // according to what's stored on firebase
+      const receivedMessage = {
+        content: msg.body.content,
+        isInwards: false,
+        name: msg.body.user_id,
+        content_type: msg.body.content_type,
+        avatar:
+          "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
+      };
+      this.messages.push(receivedMessage);
+    });
   },
   methods: {
     send() {
       if (this.message === "") return;
       this.sending = true;
-      sendMsg(this.message);
+      const msgToSend = {
+        user_id: this.user.uid,
+        content_type: "text",
+        content: this.message,
+      };
+      sendMsg(msgToSend);
       setTimeout(() => {
+        // TODO: Later, we'll get the user data
+        // according to what's stored on firebase
         const sentMessage = {
           content: this.message,
           isInwards: false,
           name: "Moi",
           content_type: "text",
+          avatar:
+            "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
         };
         this.messages.push(sentMessage);
         this.sending = false;

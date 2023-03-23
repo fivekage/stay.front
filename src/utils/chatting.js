@@ -1,6 +1,6 @@
 var socket = new WebSocket("ws://localhost:5000/ws");
 
-let connect = () => {
+let connect = (msgCallback) => {
   console.log("Attempting Connection...");
 
   socket.onopen = () => {
@@ -8,7 +8,9 @@ let connect = () => {
   };
 
   socket.onmessage = (msg) => {
-    console.log(msg);
+    console.log("Received msg:", msg.data);
+    debugger;
+    msgCallback(JSON.parse(msg.data));
   };
 
   socket.onclose = (event) => {
@@ -21,8 +23,8 @@ let connect = () => {
 };
 
 let sendMsg = (msg) => {
-  console.log("sending msg:", msg);
-  socket.send(msg);
+  console.log("Sending msg:", msg);
+  socket.send(JSON.stringify(msg));
 };
 
 export { connect, sendMsg };
