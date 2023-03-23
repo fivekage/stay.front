@@ -4,24 +4,23 @@
       <v-col xs="8">
         <div>
           <div>
-            <v-card-title class="text-h5"> {{ this.username }} </v-card-title>
+            <v-card-title class="text-h6 mr-0">
+              {{ this.user.username }}
+            </v-card-title>
 
             <v-card-subtitle class="text-caption subtitle"
-              >{{ this.userUuid }}
+              >{{ this.roomGuid }}
               <v-tooltip activator="parent" location="end">{{
-                this.userUuid
+                this.roomGuid
               }}</v-tooltip>
             </v-card-subtitle>
           </div>
         </div>
       </v-col>
-      <v-col xs="4">
+      <v-col xs="3">
         <div class="d-flex justify-end">
-          <v-avatar class="ma-1" size="65" rounded="0">
-            <v-img
-              class="avatar"
-              src="https://cdn.vuetifyjs.com/images/cards/foster.jpg"
-            ></v-img>
+          <v-avatar class="ma-1" size="55" rounded="0">
+            <v-img class="avatar" :src="this.user.avatarURL"></v-img>
           </v-avatar>
           <v-card-actions class="chat">
             <v-btn size="large" color="#000">
@@ -42,9 +41,8 @@
 export default {
   name: "Link",
   props: {
-    userUuid: String,
-    photo: String,
-    username: String,
+    roomGuid: String,
+    user: Object,
   },
   computed: {
     mobile() {

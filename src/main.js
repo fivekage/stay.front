@@ -14,7 +14,7 @@ const firebaseConfig = {
   appId: process.env.VUE_APP_FIREBASE_APP_ID,
 };
 
-console.log("API URL" + process.env.VUE_APP_API_BASE_URL);
+console.log("API URL: " + process.env.VUE_APP_API_BASE_URL);
 
 // globally store google maps config
 window.googleMapsConfig = {

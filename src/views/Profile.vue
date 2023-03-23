@@ -33,6 +33,7 @@
 
 <script>
 import firebase from "firebase/compat/app";
+import { registerUserInfos } from "@/utils/api";
 
 export default {
   data() {
@@ -47,6 +48,7 @@ export default {
     });
     if (user) {
       this.user = user;
+      registerUserInfos(this.user);
     }
   },
   methods: {
