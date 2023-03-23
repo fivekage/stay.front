@@ -314,15 +314,33 @@ export default {
 <style scoped>
 .map {
   width: 100%;
-  min-height: 100vh;
-  position: unset !important;
-  overflow: auto !important;
+  height: 100%;
+  position: absolute !important;
+  overflow: hidden !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .map__button {
-  position: sticky;
+  left: 50%;
   bottom: 1.4rem;
-  width: 90%;
+  width: fit-content;
+  transform: translate(-50%);
+  position: absolute;
+}
+
+.v-list-subheader {
+  font-size: 1.2rem !important;
+  font-weight: 500 !important;
+  color: #000 !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.v-navigation-drawer__content {
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
 }
 
 .v-main__scroller {
