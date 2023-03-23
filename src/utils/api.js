@@ -117,3 +117,49 @@ export function getAllDirectLinks(userUuid) {
       });
   });
 }
+
+/**
+ * Users
+ */
+export function registerUserInfos(user) {
+  const formData = {
+    uid: user.uid,
+    username: user.displayName,
+    email: user.email,
+    avatarURL: user.photoURL,
+  };
+
+  return new Promise((resolve, reject) => {
+    instance
+      .post("user", formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export function getUserInfos(userUuid) {
+  return new Promise((resolve, reject) => {
+    instance
+      .get(`user/${userUuid}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}

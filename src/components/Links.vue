@@ -1,7 +1,7 @@
 <template>
   <v-progress-circular
     class="mx-5 my-5 loader"
-    v-if="items == null"
+    v-if="links == null"
     indeterminate
     color="orange"
     :size="80"
@@ -9,18 +9,17 @@
   ></v-progress-circular>
   <v-list lines="one">
     <Link
-      v-for="item in items"
-      :key="item.id"
-      :userUuid="item.uuid"
-      :username="item.username"
-      :photo="test"
+      v-for="item in links"
+      :key="item.guid"
+      :roomGuid="item.guid"
+      :user="item.user"
     />
   </v-list>
 </template>
 
 <script>
 import Link from "./Link.vue";
-import { getAllDirectLinks } from "@/utils/api";
+import { getAllDirectLinks, getUserInfos } from "@/utils/api";
 import firebase from "firebase/compat/app";
 
 /* get links item with api and set it to data var */
@@ -32,7 +31,7 @@ export default {
   data() {
     return {
       user: null,
-      items: null,
+      links: null,
     };
   },
   beforeMount() {
@@ -44,16 +43,17 @@ export default {
   methods: {
     fetchLinks() {
       getAllDirectLinks(this.user.uid)
-        .then((res) => {
-          this.items = res.data.map((link) => {
-            return {
-              uuid: link.userUuid,
-              username: link.username ?? "Anonymous",
-              photo:
-                link.avatar ??
-                "https://cdn.vuetifyjs.com/images/cards/foster.jpg",
-            };
-          });
+        .then(async (res) => {
+          this.links = await Promise.all(
+            res.data.map(async (link) => {
+              const to = link.members.find((m) => m !== this.user.uid);
+              const friend = await getUserInfos(to);
+              return {
+                guid: link.guid,
+                user: friend.data,
+              };
+            })
+          );
         })
         .catch((err) => {
           console.error("erreur récupération rooms: ", err);
