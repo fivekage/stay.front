@@ -134,7 +134,7 @@ export default {
       if (this.myLocation.lat && this.myLocation.lng) {
         // creating the map object, displaying it in the $el DOM object
         this.map = new this.google.maps.Map(this.$refs["map"], {
-          zoom: 18,
+          zoom: 13,
           center: this.myLocation,
         });
 
@@ -325,7 +325,7 @@ export default {
 
 .map__button {
   left: 50%;
-  bottom: 1.4rem;
+  bottom: 4.4rem;
   width: fit-content;
   transform: translate(-50%);
   position: absolute;
