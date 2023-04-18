@@ -89,21 +89,31 @@ export default {
       .then((data) => localStorage.setItem("token", data));
     if (user) {
       this.user = user;
+      localStorage.setItem("uid", user.uid);
     }
 
     // connect to the websocket
     connect((msg) => {
-      console.log("Received message event");
-      // TODO: Later, we'll get the user data
-      // according to what's stored on firebase
-      const receivedMessage = {
-        content: msg.body.content,
-        isInwards: false,
-        name: msg.body.user_id,
-        content_type: msg.body.content_type,
-        avatar:
-          "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
-      };
+      let receivedMessage = {};
+      if (msg.body.user_id === "system") {
+        receivedMessage = {
+          content: msg.body.content,
+          isInwards: false,
+          name: "system",
+          content_type: msg.body.content_type,
+        };
+      } else {
+        // TODO: Later, we'll get the user data
+        // according to what's stored on firebase
+        receivedMessage = {
+          content: msg.body.content,
+          isInwards: msg.body.user_id == this.user.uid ? false : true,
+          name: msg.body.user_id,
+          content_type: msg.body.content_type,
+          avatar:
+            "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
+        };
+      }
       this.messages.push(receivedMessage);
     });
   },
@@ -117,21 +127,8 @@ export default {
         content: this.message,
       };
       sendMsg(msgToSend);
-      setTimeout(() => {
-        // TODO: Later, we'll get the user data
-        // according to what's stored on firebase
-        const sentMessage = {
-          content: this.message,
-          isInwards: false,
-          name: "Moi",
-          content_type: "text",
-          avatar:
-            "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
-        };
-        this.messages.push(sentMessage);
-        this.sending = false;
-        this.message = "";
-      }, 1000);
+      this.sending = false;
+      this.message = "";
     },
   },
 };

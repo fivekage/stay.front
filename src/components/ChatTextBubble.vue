@@ -1,14 +1,18 @@
 <template>
-  <div class="text-bubble" :class="{ inwards: isInwards }">
+  <div
+    class="text-bubble"
+    :class="{ inwards: isInwards, system: name === 'system' }"
+  >
     <div class="name-content">
-      <p class="name">{{ this.name }}</p>
+      <p v-if="this.name !== 'system'" class="name">{{ this.name }}</p>
       <div class="contents" :class="{ inwards: isInwards }">
-        <p v-if="this.content_type == 'text'">
+        <p v-if="this.content_type === 'text'">
           {{ this.content }}
         </p>
       </div>
     </div>
     <v-avatar
+      v-if="this.name !== 'system'"
       :image="this.avatar"
       class="avatar"
       alt="Photo de profil"
@@ -48,25 +52,33 @@ export default {
 
 <style scoped lang="scss">
 .text-bubble {
-  display: flex;
-  flex-direction: row;
   margin: 0;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
   justify-content: flex-end;
+
+  &.system {
+    justify-content: center;
+    text-align: center;
+
+    .name-content .contents {
+      padding: 0;
+      background-color: transparent;
+      color: #000a;
+      max-width: unset;
+    }
+  }
 
   &.inwards {
     flex-direction: row-reverse;
-  }
-
-  .avatar {
-    margin-right: 10px;
+    text-align: start;
   }
 
   .name-content {
     .name {
       font-size: 0.8rem;
       margin: 0;
-      text-align: end;
       padding: 0 10px;
     }
 
@@ -75,14 +87,14 @@ export default {
       border-radius: 10px 0 10px 10px;
       background-color: #e08600;
       color: #000;
-      max-width: 70%;
-      /*min-width: fit-content;*/
-      margin-right: 10px;
+      min-width: fit-content;
+      margin: 0 10px;
       float: right;
 
       &.inwards {
         background-color: #c7c7c7;
-        border-radius: 10px 10px 0 10px;
+        border-radius: 0 10px 10px 10px;
+        float: left;
       }
     }
   }

@@ -1,7 +1,9 @@
-var socket = new WebSocket("ws://localhost:5000/ws");
+const socketUrl = "ws://localhost:5000/ws";
+let socket = {};
 
 let connect = (msgCallback) => {
   console.log("Attempting Connection...");
+  socket = new WebSocket(socketUrl + "?id=" + localStorage.getItem("uid"));
 
   socket.onopen = () => {
     console.log("Successfully Connected");
@@ -9,7 +11,6 @@ let connect = (msgCallback) => {
 
   socket.onmessage = (msg) => {
     console.log("Received msg:", msg.data);
-    debugger;
     msgCallback(JSON.parse(msg.data));
   };
 
