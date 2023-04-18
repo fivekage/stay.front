@@ -28,4 +28,9 @@ let sendMsg = (msg) => {
   socket.send(JSON.stringify(msg));
 };
 
-export { connect, sendMsg };
+let disconnect = () => {
+  console.log("Disconnecting socket...");
+  socket.close();
+};
+
+export { connect, sendMsg, disconnect };

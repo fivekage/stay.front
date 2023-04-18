@@ -49,7 +49,7 @@
 <script>
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
-import { connect, sendMsg } from "@/utils/chatting";
+import { connect, disconnect, sendMsg } from "@/utils/chatting";
 
 export default {
   components: {
@@ -116,6 +116,10 @@ export default {
       }
       this.messages.push(receivedMessage);
     });
+  },
+  beforeUnmount() {
+    // disconnect from the websocket
+    disconnect();
   },
   methods: {
     send() {
