@@ -56,6 +56,22 @@ export default {
   components: {
     ChatTextBubble,
   },
+  params: {
+    type: {
+      type: String,
+      required: true,
+      default: "channel",
+      validator(value) {
+        // The value must match one of these strings
+        return ["channel", "direct"].includes(value);
+      },
+    },
+    roomId: {
+      type: String,
+      required: true,
+      default: "1852f195-0487-48be-9874-e9911189fbc0",
+    },
+  },
   data() {
     return {
       // user object
@@ -70,8 +86,8 @@ export default {
         },
       },
       // channel id
-      id: {
-        type: Number,
+      roomId: {
+        type: String,
         required: true,
       },
       // message to be sending
@@ -138,6 +154,7 @@ export default {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
+        room_id: this.roomId,
         user_id: this.user.uid,
         content_type: "text",
         content: this.message,
