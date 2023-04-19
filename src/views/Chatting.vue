@@ -1,5 +1,5 @@
 <template>
-  <h2>Chatting test</h2>
+  <h2>[INSERT HERE NAME OF ROOM]</h2>
   <div id="messages">
     <chat-text-bubble
       v-for="(message, index) in messages"
@@ -50,6 +50,7 @@
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
 import { connect, disconnect, sendMsg } from "@/utils/chatting";
+import { getUserInfos } from "@/utils/api";
 
 export default {
   components: {
@@ -79,6 +80,8 @@ export default {
       messages: [],
       // actively sending a message right now
       sending: false,
+      // users correspondances
+      users: [],
     };
   },
   created() {
@@ -93,25 +96,34 @@ export default {
     }
 
     // connect to the websocket
-    connect((msg) => {
+    connect(async (msg) => {
       let receivedMessage = {};
       if (msg.body.user_id === "system") {
+        let messageContent = msg.body.content.split(" ");
+
+        if (messageContent.length == 2) {
+          let userInfos = await getUserInfos(messageContent[0]);
+          this.users[messageContent[0]] = userInfos.data;
+        }
+
+        const messageContentParsed =
+          messageContent.length == 2
+            ? `${this.users[messageContent[0]].username} ${messageContent[1]}`
+            : null;
         receivedMessage = {
-          content: msg.body.content,
+          content: messageContentParsed,
           isInwards: false,
           name: "system",
           content_type: msg.body.content_type,
+          userUid: messageContent.length == 2 ? messageContent[0] : null,
         };
       } else {
-        // TODO: Later, we'll get the user data
-        // according to what's stored on firebase
         receivedMessage = {
           content: msg.body.content,
           isInwards: msg.body.user_id == this.user.uid ? false : true,
-          name: msg.body.user_id,
+          name: this.users[msg.body.user_id].username,
           content_type: msg.body.content_type,
-          avatar:
-            "https://pbs.twimg.com/media/FSoXgecXwAAY81T?format=webp&name=small",
+          avatar: this.users[msg.body.user_id].avatarURL,
         };
       }
       this.messages.push(receivedMessage);
