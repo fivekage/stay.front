@@ -1,4 +1,4 @@
-const socketUrl = "ws://localhost:5000/ws";
+const socketUrl = process.env.VUE_APP_CHATTING_API;
 let socket = {};
 
 let connect = (msgCallback) => {
