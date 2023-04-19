@@ -154,7 +154,7 @@ export default {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
-        room_id: this.roomId,
+        room_id: "1852f195-0487-48be-9874-e9911189fbc0", //this.roomId,
         user_id: this.user.uid,
         content_type: "text",
         content: this.message,
