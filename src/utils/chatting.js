@@ -3,7 +3,13 @@ let socket = {};
 
 let connect = (msgCallback) => {
   console.log("Attempting Connection...");
-  socket = new WebSocket(socketUrl + "?id=" + localStorage.getItem("uid"));
+  socket = new WebSocket(
+    socketUrl +
+      "?id=" +
+      localStorage.getItem("uid") +
+      "&token=" +
+      localStorage.getItem("token")
+  );
 
   socket.onopen = () => {
     console.log("Successfully Connected");
