@@ -1,9 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
+import firebase from "firebase/compat/app";
 import Login from "@/views/Login";
+import Chatting from "@/views/Chatting";
 import DirectLink from "@/views/DirectLink";
 import Profile from "@/views/Profile";
 import Map from "@/views/Map";
-import firebase from "firebase/compat/app";
 
 const routes = [
   {
@@ -32,7 +33,15 @@ const routes = [
     },
   },
   {
-    path: "/direct-link",
+    path: "/channel/:channelId",
+    name: "Channel",
+    component: Chatting,
+    meta: {
+      auth: true,
+    },
+  },
+  {
+    path: "/direct/:userId",
     name: "DirectLink",
     component: DirectLink,
     meta: {
