@@ -9,10 +9,7 @@
             </v-card-title>
 
             <v-card-subtitle class="text-caption subtitle"
-              >{{ this.roomGuid }}
-              <v-tooltip activator="parent" location="end">{{
-                this.roomGuid
-              }}</v-tooltip>
+              >#{{ this.user.uid.slice(0, 4) }}
             </v-card-subtitle>
           </div>
         </div>

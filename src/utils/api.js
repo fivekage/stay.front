@@ -95,6 +95,24 @@ export function getReachableRooms(longitude, latitude) {
   });
 }
 
+export function getRoomById(roomUuid) {
+  return new Promise((resolve, reject) => {
+    instance
+      .get(`chat-room/${roomUuid}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
 /**
  * Direct Links
  */
@@ -150,6 +168,27 @@ export function getUserInfos(userUuid) {
   return new Promise((resolve, reject) => {
     instance
       .get(`user/${userUuid}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+/**
+ * Messages
+ */
+export function getMessages(roomUuid) {
+  return new Promise((resolve, reject) => {
+    instance
+      .get(`message/${roomUuid}/messages`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,

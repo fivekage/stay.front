@@ -33,7 +33,7 @@ const routes = [
     },
   },
   {
-    path: "/channel/:channelId",
+    path: "/channel/:type/:channelId",
     name: "Channel",
     component: Chatting,
     meta: {
@@ -41,7 +41,7 @@ const routes = [
     },
   },
   {
-    path: "/direct/:userId",
+    path: "/direct",
     name: "DirectLink",
     component: DirectLink,
     meta: {
