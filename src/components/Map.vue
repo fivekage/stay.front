@@ -16,7 +16,11 @@
       <v-list-subheader>Salons accessibles</v-list-subheader>
       <v-virtual-scroll :height="150">
         <v-list-item-group color="primary">
-          <v-list-item v-for="(item, i) in items" :key="i">
+          <v-list-item
+            v-for="(item, i) in items"
+            :key="i"
+            @click="redirectToRoom(item)"
+          >
             <template v-slot:prepend>
               <v-list-item-icon>
                 <v-icon :color="item.color" icon="mdi-circle"></v-icon>
@@ -287,6 +291,17 @@ export default {
         .catch((err) => {
           console.error("erreur récupération rooms: ", err);
         });
+    },
+    redirectToRoom(room) {
+      debugger;
+      const roomId = room.value;
+      this.$router.push({
+        name: "Channel",
+        params: {
+          type: "room",
+          channelId: roomId,
+        },
+      });
     },
   },
   watch: {

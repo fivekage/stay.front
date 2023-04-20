@@ -1,5 +1,5 @@
 <template>
-  <h2>[INSERT HERE NAME OF ROOM]</h2>
+  <h2>{{ roomTitle }}</h2>
   <div id="messages">
     <chat-text-bubble
       v-for="(message, index) in messages"
@@ -50,7 +50,7 @@
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
 import { connect, disconnect, sendMsg } from "@/utils/chatting";
-import { getUserInfos } from "@/utils/api";
+import { getUserInfos, getMessages, getRoomById } from "@/utils/api";
 
 export default {
   components: {
@@ -60,13 +60,13 @@ export default {
     type: {
       type: String,
       required: true,
-      default: "channel",
+      default: "room",
       validator(value) {
         // The value must match one of these strings
-        return ["channel", "direct"].includes(value);
+        return ["room", "direct"].includes(value);
       },
     },
-    roomId: {
+    channelId: {
       type: String,
       required: true,
       default: "1852f195-0487-48be-9874-e9911189fbc0",
@@ -74,6 +74,8 @@ export default {
   },
   data() {
     return {
+      // room title
+      roomTitle: "Room 1",
       // user object
       user: null,
       // channel type
@@ -141,8 +143,36 @@ export default {
           content_type: msg.body.content_type,
           avatar: this.users[msg.body.user_id].avatarURL,
         };
+        debugger;
       }
       this.messages.push(receivedMessage);
+    });
+  },
+  async mounted() {
+    // Get room title
+    this.getRoomInfos();
+    // scroll to the bottom of the messages
+    const messages = document.getElementById("messages");
+    messages.scrollTop = messages.scrollHeight;
+    // get history of messages
+    const data = await getMessages(this.$route.params.channelId);
+    const uniqueUsers = [
+      ...new Set(data.data.map((message) => message.writedBy)),
+    ];
+    for (const userId of uniqueUsers) {
+      const userInfos = await getUserInfos(userId);
+      if (!this.users[userId]) {
+        this.users[userId] = userInfos.data;
+      }
+    }
+    this.messages = data.data.map((message) => {
+      return {
+        content: message.content,
+        isInwards: message.writedBy == this.user.uid ? false : true,
+        name: this.users[message.writedBy]?.username,
+        content_type: message.content_type,
+        avatar: this.users[message.writedBy]?.avatarURL,
+      };
     });
   },
   beforeUnmount() {
@@ -154,7 +184,7 @@ export default {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
-        room_id: "1852f195-0487-48be-9874-e9911189fbc0", //this.roomId,
+        room_id: "1852f195-0487-48be-9874-e9911189fbc0", //this.channelId,
         user_id: this.user.uid,
         content_type: "text",
         content: this.message,
@@ -162,6 +192,11 @@ export default {
       sendMsg(msgToSend);
       this.sending = false;
       this.message = "";
+    },
+    getRoomInfos() {
+      getRoomById(this.$route.params.channelId).then((data) => {
+        this.roomTitle = data.data.name;
+      });
     },
   },
 };
