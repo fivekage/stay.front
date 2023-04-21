@@ -11,26 +11,28 @@
         </p>
       </div>
     </div>
-    <v-avatar
-      v-if="this.name !== 'system'"
-      :image="this.avatar"
-      class="avatar"
-      alt="Photo de profil"
-      size="40"
-      referrerpolicy="no-referrer"
-    >
-    </v-avatar>
+    <PopoverUser
+      :avatar="this.avatar"
+      :name="this.name"
+      :userUid="this.userUid"
+      :liked="this.liked"
+    ></PopoverUser>
   </div>
 </template>
 
 <script>
+import PopoverUser from "./PopoverUser.vue";
 export default {
+  components: { PopoverUser },
   name: "ChatTextBubble",
   props: {
     avatar: {
       type: String,
     },
     name: {
+      type: String,
+    },
+    userUid: {
       type: String,
     },
     isInwards: {
@@ -45,6 +47,9 @@ export default {
     content: {
       default: "",
       required: true,
+    },
+    liked: {
+      type: Boolean,
     },
   },
 };
