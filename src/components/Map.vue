@@ -293,7 +293,6 @@ export default {
         });
     },
     redirectToRoom(room) {
-      debugger;
       const roomId = room.value;
       this.$router.push({
         name: "Channel",

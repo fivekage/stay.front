@@ -160,7 +160,6 @@ export default {
           content_type: msg.body.content_type,
           avatar: this.users[msg.body.user_id].avatarURL,
         };
-        debugger;
       }
       this.messages.push(receivedMessage);
     });
@@ -168,6 +167,7 @@ export default {
   mounted() {
     // Get room title
     this.getRoomInfos();
+
     // scroll to the bottom of the messages
     const messages = document.getElementById("messages");
     messages.scrollTop = messages.scrollHeight;
@@ -224,7 +224,7 @@ export default {
       await Promise.all(promisesUserInfos);
 
       // Handle messages history
-      this.messages = data.data.map((message) => {
+      var oldMessages = data.data.map((message) => {
         return {
           content: message.content,
           isInwards: message.writedBy == this.user.uid ? false : true,
@@ -235,7 +235,14 @@ export default {
           liked: usersLiked.includes(message.writedBy),
         };
       });
-      console.log(this.messages);
+      if (this.messages.length == 0) {
+        this.messages = oldMessages;
+      } else {
+        // we concat new messages in old messages and not
+        // the other way around because we want to display
+        // the oldest messages first
+        this.messages = oldMessages.concat(this.messages);
+      }
     },
     async doILikedThisUser(userUid) {
       if (localStorage.getItem("uid") == userUid) return false;
