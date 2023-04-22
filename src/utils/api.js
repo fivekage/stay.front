@@ -182,6 +182,46 @@ export function getUserInfos(userUuid) {
   });
 }
 
+export function doILikeThisUser(me, userUuid) {
+  return new Promise((resolve, reject) => {
+    instance
+      .get(`user/is-liked/${me}/${userUuid}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export function likeAnUser(me, userUuid) {
+  const formData = {
+    me: me,
+    friendUid: userUuid,
+  };
+  return new Promise((resolve, reject) => {
+    instance
+      .post(`user/add-friend`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
 /**
  * Messages
  */

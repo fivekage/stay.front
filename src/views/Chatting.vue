@@ -1,14 +1,25 @@
 <template>
-  <h2>{{ roomTitle }}</h2>
+  <h2 class="mb-2 d-block text-center">{{ roomTitle }}</h2>
+  <v-divider class="mb-4"></v-divider>
   <div id="messages">
+    <v-progress-circular
+      class="mx-5 my-5 loader"
+      v-if="messages == null || messages.length === 0"
+      indeterminate
+      color="orange"
+      :size="80"
+      :width="8"
+    ></v-progress-circular>
     <chat-text-bubble
       v-for="(message, index) in messages"
       :key="index"
       :content="message.content"
       :isInwards="message.isInwards"
       :name="message.name"
+      :userUid="message.userUid"
       :content_type="message.content_type"
       :avatar="message.avatar"
+      :liked="message.liked"
     ></chat-text-bubble>
   </div>
   <!-- lower text bar and send button -->
@@ -50,7 +61,12 @@
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
 import { connect, disconnect, sendMsg } from "@/utils/chatting";
-import { getUserInfos, getMessages, getRoomById } from "@/utils/api";
+import {
+  getUserInfos,
+  getMessages,
+  getRoomById,
+  doILikeThisUser,
+} from "@/utils/api";
 
 export default {
   components: {
@@ -75,7 +91,7 @@ export default {
   data() {
     return {
       // room title
-      roomTitle: "Room 1",
+      roomTitle: "Loading..",
       // user object
       user: null,
       // channel type
@@ -140,6 +156,7 @@ export default {
           content: msg.body.content,
           isInwards: msg.body.user_id == this.user.uid ? false : true,
           name: this.users[msg.body.user_id].username,
+          userUid: msg.body.user_id,
           content_type: msg.body.content_type,
           avatar: this.users[msg.body.user_id].avatarURL,
         };
@@ -148,32 +165,15 @@ export default {
       this.messages.push(receivedMessage);
     });
   },
-  async mounted() {
+  mounted() {
     // Get room title
     this.getRoomInfos();
     // scroll to the bottom of the messages
     const messages = document.getElementById("messages");
     messages.scrollTop = messages.scrollHeight;
-    // get history of messages
-    const data = await getMessages(this.$route.params.channelId);
-    const uniqueUsers = [
-      ...new Set(data.data.map((message) => message.writedBy)),
-    ];
-    for (const userId of uniqueUsers) {
-      const userInfos = await getUserInfos(userId);
-      if (!this.users[userId]) {
-        this.users[userId] = userInfos.data;
-      }
-    }
-    this.messages = data.data.map((message) => {
-      return {
-        content: message.content,
-        isInwards: message.writedBy == this.user.uid ? false : true,
-        name: this.users[message.writedBy]?.username,
-        content_type: message.content_type,
-        avatar: this.users[message.writedBy]?.avatarURL,
-      };
-    });
+
+    // get all messages
+    this.getHistoryMessage();
   },
   beforeUnmount() {
     // disconnect from the websocket
@@ -197,6 +197,49 @@ export default {
       getRoomById(this.$route.params.channelId).then((data) => {
         this.roomTitle = data.data.name;
       });
+    },
+    async getHistoryMessage() {
+      // get history of messages
+      const data = await getMessages(this.$route.params.channelId);
+      const uniqueUsers = [
+        ...new Set(data.data.map((message) => message.writedBy)),
+      ];
+
+      // Get Users Liked
+      const promisesLikes = uniqueUsers.map(async (user) => {
+        const userLiked = await this.doILikedThisUser(user);
+        if (userLiked.data) {
+          return user;
+        }
+      });
+      const usersLiked = await Promise.all(promisesLikes);
+
+      // Fill users correspondances
+      const promisesUserInfos = uniqueUsers.map(async (userId) => {
+        const userInfos = await getUserInfos(userId);
+        if (!this.users[userId]) {
+          this.users[userId] = userInfos.data;
+        }
+      });
+      await Promise.all(promisesUserInfos);
+
+      // Handle messages history
+      this.messages = data.data.map((message) => {
+        return {
+          content: message.content,
+          isInwards: message.writedBy == this.user.uid ? false : true,
+          userUid: message.writedBy,
+          name: this.users[message.writedBy]?.username,
+          content_type: message.content_type,
+          avatar: this.users[message.writedBy]?.avatarURL,
+          liked: usersLiked.includes(message.writedBy),
+        };
+      });
+      console.log(this.messages);
+    },
+    async doILikedThisUser(userUid) {
+      if (localStorage.getItem("uid") == userUid) return false;
+      return await doILikeThisUser(localStorage.getItem("uid"), userUid);
     },
   },
 };
