@@ -23,14 +23,21 @@
     ></chat-text-bubble>
   </div>
   <!-- lower text bar and send button -->
-  <v-app-bar location="bottom" absolute height="48" color="white" elevation="0">
+  <v-app-bar
+    location="bottom"
+    fixed
+    height="48"
+    color="white"
+    elevation="0"
+    class="text-bar"
+  >
     <v-text-field
       v-model="message"
       id="messageBox"
       single-line
       variant="outlined"
       density="compact"
-      class="rounded-pill ml-4"
+      class="rounded-pill ml-4 msg-to-send"
       color="primary-darker"
       :active="!sending"
       @keyup.enter="send()"
@@ -251,3 +258,30 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+
+  h2 {
+    padding: 16px;
+    padding-bottom: 0;
+  }
+
+  #messages {
+    overflow: auto;
+    min-height: 0;
+    padding: 0 16px;
+  }
+}
+
+.v-app-bar.text-bar .v-input.msg-to-send {
+  margin-right: 10px;
+  .v-input__details {
+    display: none !important;
+  }
+}
+</style>
