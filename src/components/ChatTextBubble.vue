@@ -57,8 +57,7 @@ export default {
 
 <style scoped lang="scss">
 .text-bubble {
-  margin: 0;
-  margin-bottom: 10px;
+  margin: 10px 1em 0 1em;
   display: flex;
   flex-direction: row;
   justify-content: flex-end;

@@ -93,7 +93,7 @@ export default {
 
 <style scoped>
 .avatar {
-  margin: 0 10px;
+  margin: 0;
   width: 40px;
   height: 40px;
   border-radius: 50%;

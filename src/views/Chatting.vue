@@ -1,7 +1,7 @@
 <template>
   <h2 class="mb-2 d-block text-center">{{ roomTitle }}</h2>
   <v-divider class="mb-4"></v-divider>
-  <div id="messages">
+  <v-container fluid class="fill-height" id="messages">
     <v-progress-circular
       class="mx-5 my-5 loader"
       v-if="messages == null || messages.length === 0"
@@ -21,7 +21,7 @@
       :avatar="message.avatar"
       :liked="message.liked"
     ></chat-text-bubble>
-  </div>
+  </v-container>
   <!-- lower text bar and send button -->
   <v-app-bar
     location="bottom"
@@ -274,7 +274,10 @@ export default {
   #messages {
     overflow: auto;
     min-height: 0;
-    padding: 0 16px;
+
+    & > :last-child {
+      margin-bottom: 1em;
+    }
   }
 }
 
