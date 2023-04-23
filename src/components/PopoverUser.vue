@@ -59,8 +59,6 @@ export default {
     likeDisabled: false,
   }),
   created() {
-    console.log("name: ", this.userUid);
-    console.log("do i like him again ? ", this.liked);
     if (this.liked) {
       this.fav = true;
     } else {
@@ -78,14 +76,10 @@ export default {
     like() {
       const previousStateFav = this.fav;
       this.fav = !this.fav;
-      likeAnUser(localStorage.getItem("uid"), this.userUid)
-        .then((res) => {
-          console.log("likeAnUser: ", res);
-        })
-        .catch((err) => {
-          console.log("error during likeAnUser: ", err);
-          this.fav = previousStateFav;
-        });
+      likeAnUser(localStorage.getItem("uid"), this.userUid).catch((err) => {
+        console.error("error during likeAnUser: ", err);
+        this.fav = previousStateFav;
+      });
     },
   },
 };

@@ -25,7 +25,7 @@ let connect = (msgCallback) => {
   };
 
   socket.onerror = (error) => {
-    console.log("Socket Error: ", error);
+    console.error("Socket Error: ", error);
   };
 };
 
