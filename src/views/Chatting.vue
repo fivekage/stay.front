@@ -1,7 +1,7 @@
 <template>
   <h2 class="mb-2 d-block text-center">{{ roomTitle }}</h2>
   <v-divider class="mb-4"></v-divider>
-  <div id="messages">
+  <v-container fluid class="fill-height" id="messages">
     <v-progress-circular
       class="mx-5 my-5 loader"
       v-if="messages == null || messages.length === 0"
@@ -21,16 +21,23 @@
       :avatar="message.avatar"
       :liked="message.liked"
     ></chat-text-bubble>
-  </div>
+  </v-container>
   <!-- lower text bar and send button -->
-  <v-app-bar location="bottom" absolute height="48" color="white" elevation="0">
+  <v-app-bar
+    location="bottom"
+    fixed
+    height="48"
+    color="white"
+    elevation="0"
+    class="text-bar"
+  >
     <v-text-field
       v-model="message"
       id="messageBox"
       single-line
       variant="outlined"
       density="compact"
-      class="rounded-pill ml-4"
+      class="rounded-pill ml-4 msg-to-send"
       color="primary-darker"
       :active="!sending"
       @keyup.enter="send()"
@@ -160,7 +167,6 @@ export default {
           content_type: msg.body.content_type,
           avatar: this.users[msg.body.user_id].avatarURL,
         };
-        debugger;
       }
       this.messages.push(receivedMessage);
     });
@@ -168,6 +174,7 @@ export default {
   mounted() {
     // Get room title
     this.getRoomInfos();
+
     // scroll to the bottom of the messages
     const messages = document.getElementById("messages");
     messages.scrollTop = messages.scrollHeight;
@@ -224,7 +231,7 @@ export default {
       await Promise.all(promisesUserInfos);
 
       // Handle messages history
-      this.messages = data.data.map((message) => {
+      var oldMessages = data.data.map((message) => {
         return {
           content: message.content,
           isInwards: message.writedBy == this.user.uid ? false : true,
@@ -235,7 +242,14 @@ export default {
           liked: usersLiked.includes(message.writedBy),
         };
       });
-      console.log(this.messages);
+      if (this.messages.length == 0) {
+        this.messages = oldMessages;
+      } else {
+        // we concat new messages in old messages and not
+        // the other way around because we want to display
+        // the oldest messages first
+        this.messages = oldMessages.concat(this.messages);
+      }
     },
     async doILikedThisUser(userUid) {
       if (localStorage.getItem("uid") == userUid) return false;
@@ -244,3 +258,33 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.v-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 !important;
+
+  h2 {
+    padding: 16px;
+    padding-bottom: 0;
+  }
+
+  #messages {
+    overflow: auto;
+    min-height: 0;
+
+    & > :last-child {
+      margin-bottom: 1em;
+    }
+  }
+}
+
+.v-app-bar.text-bar .v-input.msg-to-send {
+  margin-right: 10px;
+  .v-input__details {
+    display: none !important;
+  }
+}
+</style>

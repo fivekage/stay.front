@@ -59,8 +59,6 @@ export default {
     likeDisabled: false,
   }),
   created() {
-    console.log("name: ", this.userUid);
-    console.log("do i like him again ? ", this.liked);
     if (this.liked) {
       this.fav = true;
     } else {
@@ -78,14 +76,10 @@ export default {
     like() {
       const previousStateFav = this.fav;
       this.fav = !this.fav;
-      likeAnUser(localStorage.getItem("uid"), this.userUid)
-        .then((res) => {
-          console.log("likeAnUser: ", res);
-        })
-        .catch((err) => {
-          console.log("error during likeAnUser: ", err);
-          this.fav = previousStateFav;
-        });
+      likeAnUser(localStorage.getItem("uid"), this.userUid).catch((err) => {
+        console.error("error during likeAnUser: ", err);
+        this.fav = previousStateFav;
+      });
     },
   },
 };
@@ -93,7 +87,7 @@ export default {
 
 <style scoped>
 .avatar {
-  margin: 0 10px;
+  margin: 0;
   width: 40px;
   height: 40px;
   border-radius: 50%;

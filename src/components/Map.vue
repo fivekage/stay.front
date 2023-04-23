@@ -101,7 +101,7 @@ export default {
         console.error("Cannot get location.");
       });
     } catch (err) {
-      console.log("ERROR:", err);
+      console.error("ERROR:", err);
     }
   },
   data() {
@@ -293,7 +293,6 @@ export default {
         });
     },
     redirectToRoom(room) {
-      debugger;
       const roomId = room.value;
       this.$router.push({
         name: "Channel",
