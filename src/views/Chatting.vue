@@ -51,6 +51,9 @@
           indeterminate
         ></v-progress-linear>
       </template>
+      <template v-slot:append-inner>
+        <Canva />
+      </template>
     </v-text-field>
     <v-btn
       icon="mdi-send"
@@ -67,6 +70,7 @@
 <script>
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
+import Canva from "@/components/Canva.vue";
 import { connect, disconnect, sendMsg } from "@/utils/chatting";
 import {
   getUserInfos,
@@ -78,6 +82,7 @@ import {
 export default {
   components: {
     ChatTextBubble,
+    Canva,
   },
   params: {
     type: {
