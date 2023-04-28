@@ -142,39 +142,7 @@ export default {
     }
 
     // connect to the websocket
-    connect(async (msg) => {
-      let receivedMessage = {};
-      if (msg.body.user_id === "system") {
-        let messageContent = msg.body.content.split(" ");
-
-        if (messageContent.length == 2) {
-          let userInfos = await getUserInfos(messageContent[0]);
-          this.users[messageContent[0]] = userInfos.data;
-        }
-
-        const messageContentParsed =
-          messageContent.length == 2
-            ? `${this.users[messageContent[0]].username} ${messageContent[1]}`
-            : null;
-        receivedMessage = {
-          content: messageContentParsed,
-          isInwards: false,
-          name: "system",
-          content_type: msg.body.content_type,
-          userUid: messageContent.length == 2 ? messageContent[0] : null,
-        };
-      } else {
-        receivedMessage = {
-          content: msg.body.content,
-          isInwards: msg.body.user_id == this.user.uid ? false : true,
-          name: this.users[msg.body.user_id].username,
-          userUid: msg.body.user_id,
-          content_type: msg.body.content_type,
-          avatar: this.users[msg.body.user_id].avatarURL,
-        };
-      }
-      this.messages.push(receivedMessage);
-    });
+    this.connectSocket();
   },
   mounted() {
     // Get room title
@@ -192,11 +160,46 @@ export default {
     disconnect();
   },
   methods: {
+    connectSocket() {
+      connect(async (msg) => {
+        let receivedMessage = {};
+        if (msg.body.user_id === "system") {
+          let messageContent = msg.body.content.split(" ");
+
+          if (messageContent.length == 2) {
+            let userInfos = await getUserInfos(messageContent[0]);
+            this.users[messageContent[0]] = userInfos.data;
+          }
+
+          const messageContentParsed =
+            messageContent.length == 2
+              ? `${this.users[messageContent[0]].username} ${messageContent[1]}`
+              : null;
+          receivedMessage = {
+            content: messageContentParsed,
+            isInwards: false,
+            name: "system",
+            content_type: msg.body.content_type,
+            userUid: messageContent.length == 2 ? messageContent[0] : null,
+          };
+        } else {
+          receivedMessage = {
+            content: msg.body.content,
+            isInwards: msg.body.user_id == this.user.uid ? false : true,
+            name: this.users[msg.body.user_id].username,
+            userUid: msg.body.user_id,
+            content_type: msg.body.content_type,
+            avatar: this.users[msg.body.user_id].avatarURL,
+          };
+        }
+        this.messages.push(receivedMessage);
+      });
+    },
     send() {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
-        room_id: "1852f195-0487-48be-9874-e9911189fbc0", //this.channelId,
+        room_id: this.channelId,
         user_id: this.user.uid,
         content_type: "text",
         content: this.message,
