@@ -51,6 +51,9 @@
           indeterminate
         ></v-progress-linear>
       </template>
+      <template v-slot:append-inner>
+        <Canva @submit-canva="sendCanva" ref="canva" />
+      </template>
     </v-text-field>
     <v-btn
       icon="mdi-send"
@@ -67,33 +70,20 @@
 <script>
 import firebase from "firebase/compat/app";
 import ChatTextBubble from "@/components/ChatTextBubble.vue";
+import Canva from "@/components/Canva.vue";
 import { connect, disconnect, sendMsg } from "@/utils/chatting";
 import {
   getUserInfos,
   getMessages,
   getRoomById,
   doILikeThisUser,
+  storeFile,
 } from "@/utils/api";
 
 export default {
   components: {
     ChatTextBubble,
-  },
-  params: {
-    type: {
-      type: String,
-      required: true,
-      default: "room",
-      validator(value) {
-        // The value must match one of these strings
-        return ["room", "direct"].includes(value);
-      },
-    },
-    channelId: {
-      type: String,
-      required: true,
-      default: "1852f195-0487-48be-9874-e9911189fbc0",
-    },
+    Canva,
   },
   data() {
     return {
@@ -101,15 +91,8 @@ export default {
       roomTitle: "Loading..",
       // user object
       user: null,
-      // channel type
-      type: {
-        type: String,
-        required: true,
-        validator(value) {
-          // The value must match one of these strings
-          return ["channel", "direct"].includes(value);
-        },
-      },
+      // canva image
+      canvaImage: null,
       // channel id
       roomId: {
         type: String,
@@ -137,39 +120,7 @@ export default {
     }
 
     // connect to the websocket
-    connect(async (msg) => {
-      let receivedMessage = {};
-      if (msg.body.user_id === "system") {
-        let messageContent = msg.body.content.split(" ");
-
-        if (messageContent.length == 2) {
-          let userInfos = await getUserInfos(messageContent[0]);
-          this.users[messageContent[0]] = userInfos.data;
-        }
-
-        const messageContentParsed =
-          messageContent.length == 2
-            ? `${this.users[messageContent[0]].username} ${messageContent[1]}`
-            : null;
-        receivedMessage = {
-          content: messageContentParsed,
-          isInwards: false,
-          name: "system",
-          content_type: msg.body.content_type,
-          userUid: messageContent.length == 2 ? messageContent[0] : null,
-        };
-      } else {
-        receivedMessage = {
-          content: msg.body.content,
-          isInwards: msg.body.user_id == this.user.uid ? false : true,
-          name: this.users[msg.body.user_id].username,
-          userUid: msg.body.user_id,
-          content_type: msg.body.content_type,
-          avatar: this.users[msg.body.user_id].avatarURL,
-        };
-      }
-      this.messages.push(receivedMessage);
-    });
+    this.connectSocket();
   },
   mounted() {
     // Get room title
@@ -181,19 +132,59 @@ export default {
 
     // get all messages
     this.getHistoryMessage();
+
+    // watch canva image
+    this.$watch("$refs.canva.image", (newVal) => {
+      this.canvaImage = newVal;
+    });
   },
   beforeUnmount() {
     // disconnect from the websocket
     disconnect();
   },
   methods: {
-    send() {
+    connectSocket() {
+      connect(async (msg) => {
+        let receivedMessage = {};
+        if (msg.body.user_id === "system") {
+          let messageContent = msg.body.content.split(" ");
+
+          if (messageContent.length == 2) {
+            let userInfos = await getUserInfos(messageContent[0]);
+            this.users[messageContent[0]] = userInfos.data;
+          }
+
+          const messageContentParsed =
+            messageContent.length == 2
+              ? `${this.users[messageContent[0]].username} ${messageContent[1]}`
+              : null;
+          receivedMessage = {
+            content: messageContentParsed,
+            isInwards: false,
+            name: "system",
+            content_type: msg.body.content_type,
+            userUid: messageContent.length == 2 ? messageContent[0] : null,
+          };
+        } else {
+          receivedMessage = {
+            content: msg.body.content,
+            isInwards: msg.body.user_id == this.user.uid ? false : true,
+            name: this.users[msg.body.user_id].username,
+            userUid: msg.body.user_id,
+            content_type: msg.body.content_type,
+            avatar: this.users[msg.body.user_id].avatarURL,
+          };
+        }
+        this.messages.push(receivedMessage);
+      });
+    },
+    send(contentType = "text") {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
-        room_id: "1852f195-0487-48be-9874-e9911189fbc0", //this.channelId,
+        room_id: this.$route.params.channelId,
         user_id: this.user.uid,
-        content_type: "text",
+        content_type: contentType,
         content: this.message,
       };
       sendMsg(msgToSend);
@@ -231,13 +222,13 @@ export default {
       await Promise.all(promisesUserInfos);
 
       // Handle messages history
-      var oldMessages = data.data.map((message) => {
+      const oldMessages = data.data.map((message) => {
         return {
           content: message.content,
           isInwards: message.writedBy == this.user.uid ? false : true,
           userUid: message.writedBy,
           name: this.users[message.writedBy]?.username,
-          content_type: message.content_type,
+          content_type: message.contentType,
           avatar: this.users[message.writedBy]?.avatarURL,
           liked: usersLiked.includes(message.writedBy),
         };
@@ -254,6 +245,22 @@ export default {
     async doILikedThisUser(userUid) {
       if (localStorage.getItem("uid") == userUid) return false;
       return await doILikeThisUser(localStorage.getItem("uid"), userUid);
+    },
+    async sendCanva() {
+      if (!this.canvaImage) return;
+
+      fetch(this.canvaImage)
+        .then((res) => res.blob())
+        .then(async (blob) => {
+          const file = new File([blob], "image.png", {
+            type: "image/png",
+            lastModified: Date.now(),
+          });
+
+          const imageUrl = await storeFile(file);
+          this.message = imageUrl.data;
+          this.send("image");
+        });
     },
   },
 };

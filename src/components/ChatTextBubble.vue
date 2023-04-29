@@ -6,7 +6,15 @@
     <div class="name-content">
       <p v-if="this.name !== 'system'" class="name">{{ this.name }}</p>
       <div class="contents" :class="{ inwards: isInwards }">
-        <p v-if="this.content_type === 'text'">
+        <!-- image -->
+        <img
+          v-if="this.content_type === 'image'"
+          :src="this.content"
+          alt="image"
+          style="max-width: 100%; max-height: 100%"
+        />
+        <!-- text -->
+        <p v-else>
           {{ this.content }}
         </p>
       </div>

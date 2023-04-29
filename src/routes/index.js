@@ -36,6 +36,7 @@ const routes = [
     path: "/channel/:type/:channelId",
     name: "Channel",
     component: Chatting,
+    props: true,
     meta: {
       auth: true,
     },
