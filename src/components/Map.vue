@@ -330,7 +330,6 @@ export default {
   width: 100%;
   height: 100%;
   top: 0;
-  position: absolute !important;
   overflow: hidden !important;
   bottom: 0;
   left: 0;
@@ -339,16 +338,16 @@ export default {
 
 @media (max-width: 599px) {
   .map {
-    height: calc(100% - 65px);
+    height: 100%;
   }
 }
 
 .map__button {
   left: 50%;
-  bottom: 4.4rem;
+  bottom: 5rem;
   width: fit-content;
   transform: translate(-50%);
-  position: absolute;
+  position: fixed;
 }
 
 .v-list-subheader {
