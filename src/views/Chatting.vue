@@ -52,7 +52,7 @@
         ></v-progress-linear>
       </template>
       <template v-slot:append-inner>
-        <Canva />
+        <Canva @submit-canva="sendCanva" ref="canva" />
       </template>
     </v-text-field>
     <v-btn
@@ -77,6 +77,7 @@ import {
   getMessages,
   getRoomById,
   doILikeThisUser,
+  storeFile,
 } from "@/utils/api";
 
 export default {
@@ -84,37 +85,14 @@ export default {
     ChatTextBubble,
     Canva,
   },
-  params: {
-    type: {
-      type: String,
-      required: true,
-      default: "room",
-      validator(value) {
-        // The value must match one of these strings
-        return ["room", "direct"].includes(value);
-      },
-    },
-    channelId: {
-      type: String,
-      required: true,
-      default: "1852f195-0487-48be-9874-e9911189fbc0",
-    },
-  },
   data() {
     return {
       // room title
       roomTitle: "Loading..",
       // user object
       user: null,
-      // channel type
-      type: {
-        type: String,
-        required: true,
-        validator(value) {
-          // The value must match one of these strings
-          return ["channel", "direct"].includes(value);
-        },
-      },
+      // canva image
+      canvaImage: null,
       // channel id
       roomId: {
         type: String,
@@ -154,6 +132,11 @@ export default {
 
     // get all messages
     this.getHistoryMessage();
+
+    // watch canva image
+    this.$watch("$refs.canva.image", (newVal) => {
+      this.canvaImage = newVal;
+    });
   },
   beforeUnmount() {
     // disconnect from the websocket
@@ -195,13 +178,13 @@ export default {
         this.messages.push(receivedMessage);
       });
     },
-    send() {
+    send(contentType = "text") {
       if (this.message === "") return;
       this.sending = true;
       const msgToSend = {
-        room_id: this.channelId,
+        room_id: this.$route.params.channelId,
         user_id: this.user.uid,
-        content_type: "text",
+        content_type: contentType,
         content: this.message,
       };
       sendMsg(msgToSend);
@@ -239,13 +222,13 @@ export default {
       await Promise.all(promisesUserInfos);
 
       // Handle messages history
-      var oldMessages = data.data.map((message) => {
+      const oldMessages = data.data.map((message) => {
         return {
           content: message.content,
           isInwards: message.writedBy == this.user.uid ? false : true,
           userUid: message.writedBy,
           name: this.users[message.writedBy]?.username,
-          content_type: message.content_type,
+          content_type: message.contentType,
           avatar: this.users[message.writedBy]?.avatarURL,
           liked: usersLiked.includes(message.writedBy),
         };
@@ -262,6 +245,22 @@ export default {
     async doILikedThisUser(userUid) {
       if (localStorage.getItem("uid") == userUid) return false;
       return await doILikeThisUser(localStorage.getItem("uid"), userUid);
+    },
+    async sendCanva() {
+      if (!this.canvaImage) return;
+
+      fetch(this.canvaImage)
+        .then((res) => res.blob())
+        .then(async (blob) => {
+          const file = new File([blob], "image.png", {
+            type: "image/png",
+            lastModified: Date.now(),
+          });
+
+          const imageUrl = await storeFile(file);
+          this.message = imageUrl.data;
+          this.send("image");
+        });
     },
   },
 };

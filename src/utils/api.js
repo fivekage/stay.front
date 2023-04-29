@@ -242,3 +242,23 @@ export function getMessages(roomUuid) {
       });
   });
 }
+
+export function storeFile(file) {
+  const formData = new FormData();
+  formData.append("File", file);
+  return new Promise((resolve, reject) => {
+    instance
+      .post(`message/file`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
