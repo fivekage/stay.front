@@ -53,6 +53,15 @@
       </template>
       <template v-slot:append-inner>
         <Canva @submit-canva="sendCanva" ref="canva" />
+
+        <v-btn
+          icon="mdi-image-area"
+          class="mx-3"
+          density="compact"
+          :loading="isSelecting"
+          @click="handleFileImport"
+        >
+        </v-btn>
       </template>
     </v-text-field>
     <v-btn
@@ -63,6 +72,14 @@
       :active="!sending"
       color="primary-darker"
       @click="send()"
+    />
+    <!-- Create a File Input that will be hidden but triggered with JavaScript -->
+    <input
+      ref="uploader"
+      class="d-none"
+      type="file"
+      @change="onFileChanged"
+      accept="image/gif, image/jpeg, image/png"
     />
   </v-app-bar>
 </template>
@@ -106,6 +123,20 @@ export default {
       sending: false,
       // users correspondances
       users: [],
+      // rules for file input
+      rules: [
+        (value) => {
+          return (
+            !value ||
+            !value.length ||
+            value[0].size < 2000000 ||
+            "Avatar size should be less than 2 MB!"
+          );
+        },
+      ],
+      // selected file
+      isSelecting: false,
+      selectedFile: null,
     };
   },
   created() {
@@ -261,6 +292,35 @@ export default {
           this.message = imageUrl.data;
           this.send("image");
         });
+    },
+
+    handleFileImport() {
+      this.isSelecting = true;
+
+      // After obtaining the focus when closing the FilePicker, return the button state to normal
+      window.addEventListener(
+        "focus",
+        () => {
+          this.isSelecting = false;
+        },
+        { once: true }
+      );
+
+      // Trigger click on the FileInput
+      this.$refs.uploader.click();
+    },
+    onFileChanged(e) {
+      this.selectedFile = e.target.files[0];
+      // Verify if file is an image, and less than 10MB
+
+      if (!this.selectedFile.type.includes("image")) {
+        console.error("need an image file!");
+        return;
+      }
+      storeFile(this.selectedFile).then((imageUrl) => {
+        this.message = imageUrl.data;
+        this.send("image");
+      });
     },
   },
 };
