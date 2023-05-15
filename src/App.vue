@@ -87,4 +87,11 @@ export default {
 .v-main .v-container {
   min-height: 100%;
 }
+
+h1 {
+  font-size: 2rem;
+  margin-top: 20px;
+  margin-left: 20px;
+  text-transform: uppercase;
+}
 </style>
