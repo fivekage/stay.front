@@ -7,6 +7,15 @@
     :size="80"
     :width="8"
   ></v-progress-circular>
+  <v-list lines="one" v-else-if="links.length === 0">
+    <v-list-item>
+      <v-list-item-content>
+        <v-list-item-title class="text-center">
+          Vous n'avez pas de liens directs
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+  </v-list>
   <v-list lines="one">
     <Link
       v-for="item in links"

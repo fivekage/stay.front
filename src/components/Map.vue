@@ -82,15 +82,16 @@ export default {
     AddRoom,
   },
   props: {
-    center: {
-      type: Object,
-      required: true,
-    },
     circles: {
       type: Array,
     },
   },
-  async mounted() {
+  async created() {
+    const myLocation = await this.getLocationFromUser();
+    this.center.lat = myLocation.latitude;
+    this.center.lng = myLocation.longitude;
+    this.initRooms();
+
     try {
       // init and wait for the Google script is mounted
       this.google = await gmapsInit();
@@ -114,6 +115,10 @@ export default {
       dialog: false,
       items: [],
       allItems: [],
+      center: {
+        lat: null,
+        lng: null,
+      },
     };
   },
   computed: {
@@ -125,9 +130,6 @@ export default {
       // return the object expected by Google Maps
       return { lat: this.center.lat, lng: this.center.lng };
     },
-  },
-  beforeMount() {
-    this.initRooms();
   },
   methods: {
     submitForm(data) {
@@ -300,6 +302,18 @@ export default {
           type: "room",
           channelId: roomId,
         },
+      });
+    },
+    // Get user location
+    getLocationFromUser() {
+      return new Promise((resolve, reject) => {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            resolve(position.coords);
+          }, reject);
+        } else {
+          reject("Geolocation not supported");
+        }
       });
     },
   },
