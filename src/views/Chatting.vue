@@ -197,6 +197,10 @@ export default {
             userUid: messageContent.length == 2 ? messageContent[0] : null,
           };
         } else {
+          this.showNotification(
+            this.users[msg.body.user_id].username,
+            this.users[msg.body.user_id].avatarURL
+          );
           receivedMessage = {
             content: msg.body.content,
             isInwards: msg.body.user_id == this.user.uid ? false : true,
@@ -293,6 +297,28 @@ export default {
           this.send("image");
         });
     },
+    showNotification(username, avatar) {
+      // Request permission to display notifications
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          // Create a new notification instance
+          const notification = new Notification(`${this.roomTitle}`, {
+            body: `${username} vous a envoyé un message !`,
+            icon: avatar || "/logo.png",
+          });
+
+          // Play a sound
+          const audio = new Audio("/notification.mp3");
+          audio.play();
+
+          // Handle click event on the notification
+          notification.onclick = () => {
+            // Do something when the notification is clicked
+            console.log("Notification clicked!");
+          };
+        }
+      });
+    },
 
     handleFileImport() {
       this.isSelecting = true;
@@ -320,6 +346,15 @@ export default {
       storeFile(this.selectedFile).then((imageUrl) => {
         this.message = imageUrl.data;
         this.send("image");
+      });
+    },
+  },
+  watch: {
+    messages() {
+      this.$nextTick(() => {
+        const messages = document.getElementById("messages");
+        messages.scrollTop = messages.scrollHeight;
+        console.log("messages count: ", this.messages.length);
       });
     },
   },
