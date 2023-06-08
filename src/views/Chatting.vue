@@ -197,10 +197,14 @@ export default {
             userUid: messageContent.length == 2 ? messageContent[0] : null,
           };
         } else {
-          this.showNotification(
-            this.users[msg.body.user_id].username,
-            this.users[msg.body.user_id].avatarURL
-          );
+          // if the user is not on the page, show a notification
+          if (document.hidden || msg.body.user_id != this.user.uid) {
+            this.showNotification(
+              this.users[msg.body.user_id].username,
+              this.users[msg.body.user_id].avatarURL,
+              msg.body.content
+            );
+          }
           receivedMessage = {
             content: msg.body.content,
             isInwards: msg.body.user_id == this.user.uid ? false : true,
@@ -297,7 +301,7 @@ export default {
           this.send("image");
         });
     },
-    showNotification(username, avatar) {
+    showNotification(username, avatar, message) {
       // Request permission to display notifications
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
@@ -308,7 +312,10 @@ export default {
           });
 
           // Play a sound
-          const audio = new Audio("/notification.mp3");
+          let soundPath = "/notification.mp3"; // default sound
+          if (message === "💀") soundPath = "/notification_dead.mp3";
+
+          const audio = new Audio(soundPath);
           audio.play();
 
           // Handle click event on the notification
