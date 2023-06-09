@@ -18,6 +18,9 @@
           {{ this.content }}
         </p>
       </div>
+      <p class="name block" v-if="this.name !== 'system'">
+        {{ this.formattedDate }}
+      </p>
     </div>
     <PopoverUser
       :avatar="this.avatar"
@@ -59,6 +62,27 @@ export default {
     liked: {
       type: Boolean,
     },
+    date: {
+      type: String,
+    },
+  },
+  data() {
+    return {
+      formattedDate: "",
+    };
+  },
+  created() {
+    console.log(this.content);
+    const date = new Date(this.date);
+    this.formattedDate = date
+      .toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace(/(\d+)\/(\d+)\/(\d+),\s(\d+):(\d+)/, "$3-$1-$2 $4:$5");
   },
 };
 </script>

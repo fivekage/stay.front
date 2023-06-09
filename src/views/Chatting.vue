@@ -20,6 +20,7 @@
       :content_type="message.content_type"
       :avatar="message.avatar"
       :liked="message.liked"
+      :date="message.date"
     ></chat-text-bubble>
   </v-container>
   <!-- lower text bar and send button -->
@@ -36,6 +37,7 @@
       id="messageBox"
       single-line
       variant="outlined"
+      maxlength="255"
       density="compact"
       class="rounded-pill ml-4 msg-to-send"
       color="primary-darker"
@@ -212,6 +214,7 @@ export default {
             userUid: msg.body.user_id,
             content_type: msg.body.content_type,
             avatar: this.users[msg.body.user_id].avatarURL,
+            date: Date.now(),
           };
         }
         this.messages.push(receivedMessage);
@@ -270,6 +273,7 @@ export default {
           content_type: message.contentType,
           avatar: this.users[message.writedBy]?.avatarURL,
           liked: usersLiked.includes(message.writedBy),
+          date: message.writedAt,
         };
       });
       if (this.messages.length == 0) {
