@@ -8,7 +8,9 @@ let connect = (msgCallback) => {
       "?id=" +
       localStorage.getItem("uid") +
       "&token=" +
-      localStorage.getItem("token")
+      localStorage.getItem("token") +
+      "&room_id=" +
+      localStorage.getItem("room_id")
   );
 
   socket.onopen = () => {
