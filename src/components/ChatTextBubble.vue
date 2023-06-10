@@ -18,7 +18,7 @@
           {{ this.content }}
         </p>
       </div>
-      <p class="name block" v-if="this.name !== 'system'">
+      <p class="name block date" v-if="this.name !== 'system'">
         {{ this.formattedDate }}
       </p>
     </div>
@@ -88,6 +88,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.date {
+  width: 209px;
+}
+
 .text-bubble {
   margin: 10px 1em 0 1em;
   display: flex;

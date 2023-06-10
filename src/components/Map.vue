@@ -91,6 +91,7 @@ export default {
     this.center.lat = myLocation.latitude;
     this.center.lng = myLocation.longitude;
     this.initRooms();
+    this.intervalId = setInterval(this.initRooms, 10000); // 10000 milliseconds = 10 seconds
 
     try {
       // init and wait for the Google script is mounted
@@ -104,6 +105,10 @@ export default {
     } catch (err) {
       console.error("ERROR:", err);
     }
+  },
+  beforeUnmount() {
+    // Stop the repetition on component unmount
+    clearInterval(this.intervalId);
   },
   data() {
     return {
@@ -119,6 +124,7 @@ export default {
         lat: null,
         lng: null,
       },
+      intervalId: null,
     };
   },
   computed: {
@@ -228,6 +234,12 @@ export default {
     // Removes the circles from the map, but keeps them in the array
     clearCircles() {
       this.setAllCirclesInMap(null);
+      //clear existing circles
+      this.innerCircles.forEach((circle) => {
+        circle.setRadius(0);
+        circle.setMap(null);
+      });
+      this.innerCircles = [];
     },
     // Deletes all circles in the array by removing references to them
     deleteCircles() {
@@ -260,6 +272,7 @@ export default {
 
       getAllRooms()
         .then((res) => {
+          this.clearCircles();
           this.allItems = res.data.map((room) => {
             return {
               title: room.name,
