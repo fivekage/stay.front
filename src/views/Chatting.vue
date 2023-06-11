@@ -129,8 +129,7 @@ export default {
       rules: [
         (value) => {
           return (
-            !value ||
-            !value.length ||
+            !value?.length ||
             value[0].size < 2000000 ||
             "Avatar size should be less than 2 MB!"
           );
@@ -151,6 +150,9 @@ export default {
       this.user = user;
       localStorage.setItem("uid", user.uid);
     }
+
+    this.roomId = this.$route.params.channelId;
+    localStorage.setItem("room_id", this.roomId);
 
     // connect to the websocket
     this.connectSocket();
