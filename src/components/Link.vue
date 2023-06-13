@@ -20,7 +20,7 @@
             <v-img class="avatar" :src="this.user.avatarURL"></v-img>
           </v-avatar>
           <v-card-actions class="chat">
-            <v-btn size="large" color="#000">
+            <v-btn size="large" color="#000" @click="redirectToRoom()">
               <v-icon
                 icon="mdi-message-text"
                 size="x-large"
@@ -44,6 +44,21 @@ export default {
   computed: {
     mobile() {
       return this.$vuetify.breakpoint.sm;
+    },
+  },
+  methods: {
+    redirectToRoom() {
+      if (this.roomGuid?.length > 0) {
+        this.$router.push({
+          name: "Channel",
+          params: {
+            type: "room",
+            channelId: this.roomGuid,
+          },
+        });
+      } else {
+        console.error("No room GUID :(");
+      }
     },
   },
 };
