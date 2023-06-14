@@ -23,6 +23,7 @@ div.logo {
   & > .logo-text {
     font-size: 1.5rem;
     font-weight: 500;
+    color: #fff;
   }
 }
 </style>
