@@ -125,14 +125,15 @@ export default {
     .contents {
       padding: 10px;
       border-radius: 10px 0 10px 10px;
-      background-color: #e08600;
-      color: #000;
+      background-color: #b56c00;
+      color: #fff;
       min-width: fit-content;
       margin: 0 10px;
       float: right;
 
       &.inwards {
         background-color: #c7c7c7;
+        color: #000;
         border-radius: 0 10px 10px 10px;
         float: left;
       }

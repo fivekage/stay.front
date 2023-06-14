@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <v-app-bar color="grey-lighten-2">
+    <v-app-bar color="#e08600" style="color: #fff">
       <template v-slot:prepend>
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       </template>

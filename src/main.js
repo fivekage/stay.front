@@ -34,6 +34,7 @@ const myCustomLightTheme = {
   colors: {
     background: "#FFFFFF",
     surface: "#FFFFFF",
+    "surface-transparent": "#AAAAAA00",
     primary: "#E08600",
     "primary-darker": "#B56C00",
     secondary: "#03DAC6",
@@ -50,6 +51,7 @@ const myCustomDarkTheme = {
   colors: {
     background: "#000",
     surface: "#000",
+    "surface-transparent": "#000A",
     primary: "#FFF",
     "primary-darker": "#FFF",
     secondary: "#03DAC6",
